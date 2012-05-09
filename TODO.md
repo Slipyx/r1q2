@@ -1,6 +1,7 @@
 TODO (big stuff)
 ----------------
-- Remove setjmp / longjmp. Not supported on all architectures, leaves stale
+---
+- Remove `setjmp` / `longjmp`. Not supported on all architectures, leaves stale
   memory, crashes on Win32 if the erroring function is within a message handler
   and other uglyness.
 
@@ -14,7 +15,8 @@ TODO (big stuff)
 
 TODO (general stuff)
 --------------------
-- Event / scripting system ala AprQ2 / mIRC "ON TEXT "*match started*" record...
+---
+- Event / scripting system ala AprQ2 / mIRC "ON TEXT "\*match started\*" record...
 
 - Regex or wildcard support for server stuff - cvarbans, cmdbans, etc.
 
