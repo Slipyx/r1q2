@@ -27,10 +27,10 @@ at http://www.r1ch.net/forum/index.php?topic=106 for what's new in each release.
 ---
 Here's some config settings you can use then.
 
-`set cl_cmdcomplete 0 //restore default command completion behaviour  
-set vid_ref "r1gl" //if using R1GL; R1Q2 is also able to load NCGL and plain GL  
-set m_fixaccel 1 //replaces m_xp of NoCheat, also see m_directinput  
-set cl_async 0 //disable asynchronous fps`
+`set cl_cmdcomplete 0 //restore default command completion behaviour`  
+`set vid_ref "r1gl" //if using R1GL; R1Q2 is also able to load NCGL and plain GL`  
+`set m_fixaccel 1 //replaces m_xp of NoCheat, also see m_directinput`  
+`set cl_async 0 //disable asynchronous fps`
 
 Please be aware that R1Q2 will load ALL .pak files from your baseq2 and mod
 directories. Rename or move away any paks you don't want loaded.
