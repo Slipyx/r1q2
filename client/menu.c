@@ -965,6 +965,13 @@ static void Keys_MenuInit( void )
 
 static void Keys_MenuDraw (void)
 {
+    // [JoshK] Draw customize controls menu banner
+    {
+        char* name = "m_banner_customize";
+        int w, h;
+        re.DrawGetPicSize( &w, &h, name );
+        re.DrawPic( viddef.width / 2 - w / 2, viddef.height / 2 - 110 - h, name );
+    }
 	Menu_AdjustCursor( &s_keys_menu, 1 );
 	Menu_Draw( &s_keys_menu );
 }
@@ -2159,6 +2166,8 @@ static menuframework_s	s_game_menu;
 static menuaction_s		s_easy_game_action;
 static menuaction_s		s_medium_game_action;
 static menuaction_s		s_hard_game_action;
+// [JoshK] Add hard+ difficulty
+static menuaction_s     s_hardplus_game_action;
 static menuaction_s		s_load_game_action;
 static menuaction_s		s_save_game_action;
 static menuaction_s		s_credits_action;
@@ -2166,12 +2175,14 @@ static menuseparator_s	s_blankline;
 
 static void StartGame( void )
 {
-	if (!CM_MapWillLoad ("base1"))
+	// [JoshK] Remove this check so the demo maps will work
+	/*if (!CM_MapWillLoad ("base1"))
 	{
-		Com_Printf ("ERROR: Your Quake II installation is missing the single player data, you cannot start a single player game.\n", LOG_GENERAL);
+		Com_Printf ("ERROR: Your Quake II installation is missing the single"
+		"player data, you cannot start a single player game.\n", LOG_GENERAL);
 		M_PopMenu ();
 		return;
-	}
+	}*/
 
 	// disable updates and start the cinematic going
 	cl.servercount = -1;
@@ -2200,6 +2211,13 @@ static void MediumGameFunc( void *data )
 static void HardGameFunc( void *data )
 {
 	Cvar_ForceSet( "skill", "2" );
+	StartGame();
+}
+
+// [JoshK] HardPlusGameFunc for setting hard+ difficulty
+static void HardPlusGameFunc( void *data )
+{
+	Cvar_ForceSet( "skill", "3" );
 	StartGame();
 }
 
@@ -2252,32 +2270,44 @@ static void Game_MenuInit( void )
 	s_hard_game_action.generic.name	= "hard";
 	s_hard_game_action.generic.callback = HardGameFunc;
 
+	// [JoshK] Add hard+ game action
+	s_hardplus_game_action.generic.type = MTYPE_ACTION;
+	s_hardplus_game_action.generic.flags = QMF_LEFT_JUSTIFY | QMF_GRAYED;
+	s_hardplus_game_action.generic.x = 0;
+	s_hardplus_game_action.generic.y = 30;
+	s_hardplus_game_action.generic.name = "hard+";
+    s_hardplus_game_action.generic.callback = HardPlusGameFunc;
+
 	s_blankline.generic.type = MTYPE_SEPARATOR;
 
+	// [JoshK] Increase the y position of the rest since hard+ item was added
 	s_load_game_action.generic.type	= MTYPE_ACTION;
 	s_load_game_action.generic.flags  = QMF_LEFT_JUSTIFY;
 	s_load_game_action.generic.x		= 0;
-	s_load_game_action.generic.y		= 40;
+	s_load_game_action.generic.y		= 50;
 	s_load_game_action.generic.name	= "load game";
 	s_load_game_action.generic.callback = LoadGameFunc;
 
 	s_save_game_action.generic.type	= MTYPE_ACTION;
 	s_save_game_action.generic.flags  = QMF_LEFT_JUSTIFY;
 	s_save_game_action.generic.x		= 0;
-	s_save_game_action.generic.y		= 50;
+	s_save_game_action.generic.y		= 60;
 	s_save_game_action.generic.name	= "save game";
 	s_save_game_action.generic.callback = SaveGameFunc;
 
 	s_credits_action.generic.type	= MTYPE_ACTION;
 	s_credits_action.generic.flags  = QMF_LEFT_JUSTIFY;
 	s_credits_action.generic.x		= 0;
-	s_credits_action.generic.y		= 60;
+	// [JoshK] Seperate credits from load/save
+	s_credits_action.generic.y		= 80;
 	s_credits_action.generic.name	= "credits";
 	s_credits_action.generic.callback = CreditsFunc;
 
 	Menu_AddItem( &s_game_menu, ( void * ) &s_easy_game_action );
 	Menu_AddItem( &s_game_menu, ( void * ) &s_medium_game_action );
 	Menu_AddItem( &s_game_menu, ( void * ) &s_hard_game_action );
+	// [JoshK] Add the hard+ difficulty to menu
+	Menu_AddItem( &s_game_menu, ( void * ) &s_hardplus_game_action );
 	Menu_AddItem( &s_game_menu, ( void * ) &s_blankline );
 	Menu_AddItem( &s_game_menu, ( void * ) &s_load_game_action );
 	Menu_AddItem( &s_game_menu, ( void * ) &s_save_game_action );
@@ -3004,6 +3034,9 @@ static void StartServer_MenuInit( void )
 
 static void StartServer_MenuDraw(void)
 {
+    // [JoshK] Draw start server banner
+    M_Banner( "m_banner_start_server" );
+    Menu_AdjustCursor( &s_startserver_menu, 1 );
 	Menu_Draw( &s_startserver_menu );
 }
 
@@ -4114,6 +4147,14 @@ static void PlayerConfig_MenuDraw( void )
 		refdef.lightstyles = 0;
 		refdef.rdflags = RDF_NOWORLDMODEL;
 
+        // [JoshK] Draw player setup banner
+        {
+            char* name = "m_banner_plauer_setup";
+            int w, h;
+            re.DrawGetPicSize( &w, &h, name );
+            re.DrawPic( viddef.width / 2 - w / 2, viddef.height / 2 - 110 - h, name );
+            Menu_AdjustCursor( &s_player_config_menu, 1 );
+        }
 		Menu_Draw( &s_player_config_menu );
 
 		M_DrawTextBox( (int)(( refdef.x ) * ( 320.0F / viddef.width ) - 8), (int)(( viddef.height / 2 ) * ( 240.0F / viddef.height) - 77), refdef.width / 8, refdef.height / 8 );
