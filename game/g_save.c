@@ -20,6 +20,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 
+
+// ADJ fptrs -->
+#ifdef _WIN32
+#include "windows.h"
+#endif
+
+cvar_t	*error_on_ptrs_moved; 
+// <-- ADJ fptrs
+
 #define Function(f) {#f, f}
 
 mmove_t mmove_reloc;
@@ -202,10 +211,14 @@ void InitGame (void)
 	// dm map list
 	sv_maplist = gi.cvar ("sv_maplist", "", 0);
 
+	error_on_ptrs_moved = gi.cvar("error_on_ptrs_moved", "1", 0);  // ADJ <--> fptrs
+
 	// items
 	InitItems ();
 
-	game.helpmessage1[0] = game.helpmessage2[0] = 0;
+	Com_sprintf (game.helpmessage1, sizeof(game.helpmessage1), "");
+
+	Com_sprintf (game.helpmessage2, sizeof(game.helpmessage2), "");
 
 	// initialize all entities for this game
 	game.maxentities = maxentities->value;
@@ -312,8 +325,6 @@ void WriteField2 (FILE *f, field_t *field, byte *base)
 			fwrite (*(char **)p, len, 1, f);
 		}
 		break;
-	default:
-        break;
 	}
 }
 
@@ -457,7 +468,7 @@ A single player death will automatically restore from the
 last save position.
 ============
 */
-void WriteGame (const char *filename, qboolean autosave)
+void WriteGame (char *filename, qboolean autosave)
 {
 	FILE	*f;
 	int		i;
@@ -484,7 +495,7 @@ void WriteGame (const char *filename, qboolean autosave)
 	fclose (f);
 }
 
-void ReadGame (const char *filename)
+void ReadGame (char *filename)
 {
 	FILE	*f;
 	int		i;
@@ -500,7 +511,7 @@ void ReadGame (const char *filename)
 	if (strcmp (str, __DATE__))
 	{
 		fclose (f);
-		gi.error ("Savegame from an older version.\n");
+		gi.error ("Savegame from a different version (%s / %s).\n", str, __DATE__); // <--> ADJ fptrs
 	}
 
 	g_edicts =  gi.TagMalloc (game.maxentities * sizeof(g_edicts[0]), TAG_GAME);
@@ -621,11 +632,41 @@ void ReadLevelLocals (FILE *f)
 
 /*
 =================
+GetFunctionInStdBlock - ADJ fptrs
+
+This uses win32 API's to work out where in memory the DLL has been loaded
+- so even if some other DLL has been loaded into 0x20000000 we can return 
+the address in that range so that we can tell if function pointers really
+are moving.
+=================
+*/
+
+void *GetFunctionInStdBlock(void *p)
+{
+#ifdef _WIN32
+	byte *baseAddress = (byte *)0x20000000;
+	int offset;
+    MEMORY_BASIC_INFORMATION mbi;
+	BOOL mbiValid = VirtualQuery(InitGame, &mbi, sizeof(mbi));
+
+	if (mbiValid)
+		baseAddress = mbi.AllocationBase;
+
+	offset = ((byte*)p - baseAddress);
+
+	return (void*)(offset + 0x20000000);
+#else
+	return ((void *)InitGame);
+#endif
+}
+
+/*
+=================
 WriteLevel
 
 =================
 */
-void WriteLevel (const char *filename)
+void WriteLevel (char *filename)
 {
 	int		i;
 	edict_t	*ent;
@@ -641,7 +682,7 @@ void WriteLevel (const char *filename)
 	fwrite (&i, sizeof(i), 1, f);
 
 	// write out a function pointer for checking
-	base = (void *)InitGame;
+	base = GetFunctionInStdBlock((void *)InitGame);  // <--> ADJ fptrs
 	fwrite (&base, sizeof(base), 1, f);
 
 	// write out level_locals_t
@@ -663,6 +704,7 @@ void WriteLevel (const char *filename)
 }
 
 
+
 /*
 =================
 ReadLevel
@@ -679,13 +721,14 @@ calling ReadLevel.
 No clients are connected yet.
 =================
 */
-void ReadLevel (const char *filename)
+void ReadLevel (char *filename)
 {
 	int		entnum;
 	FILE	*f;
 	int		i;
 	void	*base;
 	edict_t	*ent;
+	void	*initGamePtr = GetFunctionInStdBlock((void*)InitGame); // <--> ADJ fptrs
 
 	f = fopen (filename, "rb");
 	if (!f)
@@ -710,13 +753,31 @@ void ReadLevel (const char *filename)
 	// check function pointer base address
 	fread (&base, sizeof(base), 1, f);
 #ifdef _WIN32
-	if (base != (void *)InitGame)
+	if (base != initGamePtr) // ADJ fptrs -->
 	{
-		fclose (f);
-		gi.error ("ReadLevel: function pointers have moved");
+		if (error_on_ptrs_moved->value)
+		{
+			fclose (f);
+			gi.error("ReadLevel: function pointers have moved\n"\
+				"You can attempt to continue by setting the cvar error_on_ptrs_moved to zero.\n"\
+				"However, this may cause crashes.\n"\
+				"InitGame addresses = %x / %x\n\n", base, initGamePtr);
+		}
+		else
+		{
+			gi.dprintf("Severe Warning: function pointers have moved\n"\
+				"You may experience crashes relating to this. You can prevent this"\
+				"by enabling the cvar error_on_ptrs_moved.\n"
+				"InitGame addresses = %x / %x\n\n", base, initGamePtr);
+		}
 	}
+	else if (base != (void *)InitGame)
+	{
+		gi.dprintf("Warning: DLL relocated - InitGame address = %x\n", ((byte *)InitGame));
+	}
+	// <-- ADJ fptrs
 #else
-	gi.dprintf("Function offsets %td\n", ((byte *)base) - ((byte *)InitGame));
+	gi.dprintf("Function offsets %d\n", ((byte *)base) - ((byte *)InitGame));
 #endif
 
 	// load the level locals

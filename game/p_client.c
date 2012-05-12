@@ -211,108 +211,22 @@ qboolean IsNeutral (edict_t *ent)
 void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 {
 	int			mod;
-	char		*message;
-	char		*message2;
+	char		*message = NULL;
 	qboolean	ff;
 
 	if (coop->value && attacker->client)
 		meansOfDeath |= MOD_FRIENDLY_FIRE;
 
+	ff = meansOfDeath & MOD_FRIENDLY_FIRE;
+	mod = meansOfDeath & ~MOD_FRIENDLY_FIRE;
+
+	// [JoshK] Deathmatch and Co-Op only messages
 	if (deathmatch->value || coop->value)
 	{
-		ff = meansOfDeath & MOD_FRIENDLY_FIRE;
-		mod = meansOfDeath & ~MOD_FRIENDLY_FIRE;
-		message = NULL;
-		message2 = "";
-
-		switch (mod)
-		{
-		case MOD_SUICIDE:
-			message = "suicides";
-			break;
-		case MOD_FALLING:
-			message = "cratered";
-			break;
-		case MOD_CRUSH:
-			message = "was squished";
-			break;
-		case MOD_WATER:
-			message = "sank like a rock";
-			break;
-		case MOD_SLIME:
-			message = "melted";
-			break;
-		case MOD_LAVA:
-			message = "does a back flip into the lava";
-			break;
-		case MOD_EXPLOSIVE:
-		case MOD_BARREL:
-			message = "blew up";
-			break;
-		case MOD_EXIT:
-			message = "found a way out";
-			break;
-		case MOD_TARGET_LASER:
-			message = "saw the light";
-			break;
-		case MOD_TARGET_BLASTER:
-			message = "got blasted";
-			break;
-		case MOD_BOMB:
-		case MOD_SPLASH:
-		case MOD_TRIGGER_HURT:
-			message = "was in the wrong place";
-			break;
-		}
-		if (attacker == self)
-		{
-			switch (mod)
-			{
-			case MOD_HELD_GRENADE:
-				message = "tried to put the pin back in";
-				break;
-			case MOD_HG_SPLASH:
-			case MOD_G_SPLASH:
-				if (IsNeutral(self))
-					message = "tripped on its own grenade";
-				else if (IsFemale(self))
-					message = "tripped on her own grenade";
-				else
-					message = "tripped on his own grenade";
-				break;
-			case MOD_R_SPLASH:
-				if (IsNeutral(self))
-					message = "blew itself up";
-				else if (IsFemale(self))
-					message = "blew herself up";
-				else
-					message = "blew himself up";
-				break;
-			case MOD_BFG_BLAST:
-				message = "should have used a smaller gun";
-				break;
-			default:
-				if (IsNeutral(self))
-					message = "killed itself";
-				else if (IsFemale(self))
-					message = "killed herself";
-				else
-					message = "killed himself";
-				break;
-			}
-		}
-		if (message)
-		{
-			gi.bprintf (PRINT_MEDIUM, "%s %s.\n", self->client->pers.netname, message);
-			if (deathmatch->value)
-				self->client->resp.score--;
-			self->enemy = NULL;
-			return;
-		}
-
 		self->enemy = attacker;
-		if (attacker && attacker->client)
+		if (attacker && attacker->client && attacker != self)
 		{
+			char		*message2 = "";
 			switch (mod)
 			{
 			case MOD_BLASTER:
@@ -399,6 +313,146 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 		}
 	}
 
+	// [JoshK] Have unique death messages in singleplayer too
+	switch (mod)
+	{
+	case MOD_SUICIDE:
+		message = "suicides";
+		break;
+	case MOD_FALLING:
+		message = "cratered";
+		break;
+	case MOD_CRUSH:
+		message = "was squished";
+		break;
+	case MOD_WATER:
+		message = "sank like a rock";
+		break;
+	case MOD_SLIME:
+		message = "melted";
+		break;
+	case MOD_LAVA:
+		message = "does a back flip into the lava";
+		break;
+	case MOD_EXPLOSIVE:
+	case MOD_BARREL:
+		message = "blew up";
+		break;
+	case MOD_EXIT:
+		message = "found a way out";
+		break;
+	case MOD_TARGET_LASER:
+		message = "saw the light";
+		break;
+	case MOD_TARGET_BLASTER:
+		message = "got blasted";
+		break;
+	case MOD_BOMB:
+	case MOD_SPLASH:
+	case MOD_TRIGGER_HURT:
+		message = "was in the wrong place";
+		break;
+	}
+	if (attacker == self)
+	{
+		switch (mod)
+		{
+		case MOD_HELD_GRENADE:
+			message = "tried to put the pin back in";
+			break;
+		case MOD_HG_SPLASH:
+		case MOD_G_SPLASH:
+			if (IsNeutral(self))
+				message = "tripped on its own grenade";
+			else if (IsFemale(self))
+				message = "tripped on her own grenade";
+			else
+				message = "tripped on his own grenade";
+			break;
+		case MOD_R_SPLASH:
+		// [JoshK] Allow blowing yourself up by shooting a explosive
+		case MOD_EXPLOSIVE:
+		case MOD_BARREL:
+			if (IsNeutral(self))
+				message = "blew itself up";
+			else if (IsFemale(self))
+				message = "blew herself up";
+			else
+				message = "blew himself up";
+			break;
+		case MOD_BFG_BLAST:
+			message = "should have used a smaller gun";
+			break;
+		default:
+			if (IsNeutral(self))
+				message = "killed itself";
+			else if (IsFemale(self))
+				message = "killed herself";
+			else
+				message = "killed himself";
+			break;
+		}
+	}
+
+	// [JoshK] Add killed by monster messages
+	if ( !message && attacker && !attacker->client ) {
+		char* class = attacker->classname;
+		self->enemy = attacker;
+		if ( !strcmp( class, "monster_soldier_light" ) ) {
+			message = "was blasted by a Light Guard";
+		} else if ( !strcmp( class, "monster_soldier" ) ) {
+			message = "was gunned down by a Shotgun Guard";
+		} else if ( !strcmp( class, "monster_soldier_ss" ) ) {
+			message = "was machinegunned by a Machinegun Guard";
+		} else if ( !strcmp( class, "monster_infantry" ) ) {
+			if ( mod == MOD_HIT ) {
+				message = "was clubbed to death by an Enforcer";
+			} else {
+				message = "was cut in half by an Enforcer's chaingun";
+			}
+		} else if ( !strcmp( class, "monster_parasite" ) ) {
+			message = "was drained by a Parasite";
+		} else if ( !strcmp( class, "monster_berserk" ) ) {
+			message = "was shafted by a Berserker";
+		} else if ( !strcmp( class, "monster_gunner" ) ) {
+			if ( mod == MOD_GRENADE ) {
+				message = "was popped by a Gunner's grenade";
+			} else if ( mod == MOD_G_SPLASH ) {
+				message = "was shredded by a Gunner's shrapnel";
+			} else {
+				message = "was machinegunned by a Gunner";
+			}
+		} else if ( !strcmp( class, "monster_flyer" ) ) {
+			if ( mod == MOD_BLASTER ) {
+				message = "was blasted by a Flyer";
+			} else {
+				message = "was sliced up by a Flyer";
+			}
+		} else if ( !strcmp( class, "monster_tank" ) ) {
+			if ( mod == MOD_BLASTER ) {
+				message = "was blasted by a Tank";
+			} else if ( mod == MOD_ROCKET ) {
+				message = "ate a Tank's rocket";
+			} else if ( mod == MOD_R_SPLASH ) {
+				message = "almost dodged a Tank's rocket";
+			} else {
+				message = "was machinegunned by a Tank";
+			}
+		} else {
+			message = "was killed";
+		}
+	}
+
+	if (message)
+	{
+		gi.bprintf (PRINT_MEDIUM, "%s %s.\n", self->client->pers.netname, message);
+		if (deathmatch->value)
+			self->client->resp.score--;
+		self->enemy = NULL;
+		return;
+	}
+
+	// ??
 	gi.bprintf (PRINT_MEDIUM,"%s died.\n", self->client->pers.netname);
 	if (deathmatch->value)
 		self->client->resp.score--;
@@ -479,7 +533,7 @@ void LookAtKiller (edict_t *self, edict_t *inflictor, edict_t *attacker)
 	}
 
 	if (dir[0])
-		self->client->killer_yaw = 180/M_PI*atan2(dir[1], dir[0]);
+		self->client->killer_yaw = 180/M_PI*(float)atan2(dir[1], dir[0]);
 	else {
 		self->client->killer_yaw = 0;
 		if (dir[1] > 0)
@@ -1187,9 +1241,9 @@ void PutClientInServer (edict_t *ent)
 	// clear playerstate values
 	memset (&ent->client->ps, 0, sizeof(client->ps));
 
-	client->ps.pmove.origin[0] = spawn_origin[0]*8;
-	client->ps.pmove.origin[1] = spawn_origin[1]*8;
-	client->ps.pmove.origin[2] = spawn_origin[2]*8;
+	client->ps.pmove.origin[0] = (int16)(spawn_origin[0]*8);
+	client->ps.pmove.origin[1] = (int16)(spawn_origin[1]*8);
+	client->ps.pmove.origin[2] = (int16)(spawn_origin[2]*8);
 
 	if (deathmatch->value && ((int)dmflags->value & DF_FIXED_FOV))
 	{
@@ -1197,7 +1251,7 @@ void PutClientInServer (edict_t *ent)
 	}
 	else
 	{
-		client->ps.fov = atoi(Info_ValueForKey(client->pers.userinfo, "fov"));
+		client->ps.fov = (float)atoi(Info_ValueForKey(client->pers.userinfo, "fov"));
 		if (client->ps.fov < 1)
 			client->ps.fov = 90;
 		else if (client->ps.fov > 160)
@@ -1397,7 +1451,7 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 	}
 	else
 	{
-		ent->client->ps.fov = atoi(Info_ValueForKey(userinfo, "fov"));
+		ent->client->ps.fov = (float)atoi(Info_ValueForKey(userinfo, "fov"));
 		if (ent->client->ps.fov < 1)
 			ent->client->ps.fov = 90;
 		else if (ent->client->ps.fov > 160)
@@ -1609,13 +1663,13 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		else
 			client->ps.pmove.pm_type = PM_NORMAL;
 
-		client->ps.pmove.gravity = sv_gravity->value;
+		client->ps.pmove.gravity = (int16)sv_gravity->value;
 		pm.s = client->ps.pmove;
 
 		for (i=0 ; i<3 ; i++)
 		{
-			pm.s.origin[i] = ent->s.origin[i]*8;
-			pm.s.velocity[i] = ent->velocity[i]*8;
+			pm.s.origin[i] = (int16)(ent->s.origin[i]*8);
+			pm.s.velocity[i] = (int16)(ent->velocity[i]*8);
 		}
 
 		if (memcmp(&client->old_pmove, &pm.s, sizeof(pm.s)))
@@ -1638,8 +1692,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 		for (i=0 ; i<3 ; i++)
 		{
-			ent->s.origin[i] = pm.s.origin[i]*0.125;
-			ent->velocity[i] = pm.s.velocity[i]*0.125;
+			ent->s.origin[i] = pm.s.origin[i]*0.125f;
+			ent->velocity[i] = pm.s.velocity[i]*0.125f;
 		}
 
 		VectorCopy (pm.mins, ent->mins);
@@ -1655,7 +1709,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			PlayerNoise(ent, ent->s.origin, PNOISE_SELF);
 		}
 
-		ent->viewheight = pm.viewheight;
+		ent->viewheight = (int)pm.viewheight;
 		ent->waterlevel = pm.waterlevel;
 		ent->watertype = pm.watertype;
 		ent->groundentity = pm.groundentity;
