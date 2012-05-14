@@ -7,11 +7,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="client\cl_cin.c" />
-    <ClCompile Include="client\cl_dll.c" />
     <ClCompile Include="client\cl_ents.c" />
     <ClCompile Include="client\cl_fx.c" />
-    <ClCompile Include="client\cl_http.c" />
     <ClCompile Include="client\cl_input.c" />
     <ClCompile Include="client\cl_inv.c" />
     <ClCompile Include="client\cl_main.c" />
@@ -53,12 +50,9 @@
     <ClCompile Include="server\sv_send.c" />
     <ClCompile Include="server\sv_user.c" />
     <ClCompile Include="server\sv_world.c" />
-    <ClCompile Include="win32\alw_win.c" />
-    <ClCompile Include="win32\cd_win.c" />
     <ClCompile Include="win32\conproc.c" />
     <ClCompile Include="win32\in_win.c" />
     <ClCompile Include="win32\net_wins.c" />
-    <ClCompile Include="win32\qal_win.c" />
     <ClCompile Include="win32\q_shwin.c" />
     <ClCompile Include="win32\snd_win.c" />
     <ClCompile Include="win32\sys_win.c" />
@@ -104,6 +98,9 @@
     <ClInclude Include="win32\wglext.h" />
     <ClInclude Include="win32\winquake.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="win32\q2.rc" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0AC0B0A5-E974-4582-8075-68E8CD05C6B2}</ProjectGuid>
     <RootNamespace>quake2</RootNamespace>
@@ -122,7 +119,9 @@
     <Import Project="_Common.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetName>r1q2</TargetName>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
@@ -134,6 +133,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

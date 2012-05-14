@@ -48,12 +48,6 @@
     <ClCompile Include="win32\vid_menu.c">
       <Filter>Source Files\win32</Filter>
     </ClCompile>
-    <ClCompile Include="win32\alw_win.c">
-      <Filter>Source Files\win32</Filter>
-    </ClCompile>
-    <ClCompile Include="win32\cd_win.c">
-      <Filter>Source Files\win32</Filter>
-    </ClCompile>
     <ClCompile Include="win32\conproc.c">
       <Filter>Source Files\win32</Filter>
     </ClCompile>
@@ -64,9 +58,6 @@
       <Filter>Source Files\win32</Filter>
     </ClCompile>
     <ClCompile Include="win32\q_shwin.c">
-      <Filter>Source Files\win32</Filter>
-    </ClCompile>
-    <ClCompile Include="win32\qal_win.c">
       <Filter>Source Files\win32</Filter>
     </ClCompile>
     <ClCompile Include="win32\snd_win.c">
@@ -144,19 +135,10 @@
     <ClCompile Include="client\snd_mix.c">
       <Filter>Source Files\client</Filter>
     </ClCompile>
-    <ClCompile Include="client\cl_cin.c">
-      <Filter>Source Files\client</Filter>
-    </ClCompile>
-    <ClCompile Include="client\cl_dll.c">
-      <Filter>Source Files\client</Filter>
-    </ClCompile>
     <ClCompile Include="client\cl_ents.c">
       <Filter>Source Files\client</Filter>
     </ClCompile>
     <ClCompile Include="client\cl_fx.c">
-      <Filter>Source Files\client</Filter>
-    </ClCompile>
-    <ClCompile Include="client\cl_http.c">
       <Filter>Source Files\client</Filter>
     </ClCompile>
     <ClCompile Include="client\cl_input.c">
@@ -329,5 +311,10 @@
     <ClInclude Include="game\game.h">
       <Filter>Header Files\game</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="win32\q2.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
