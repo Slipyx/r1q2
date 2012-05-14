@@ -671,6 +671,8 @@ void LoadPNG (const char *name, byte **pic, int *width, int *height)
 	png_infop		end_info;
 	png_bytep		row_pointers[MAX_TEXTURE_DIMENSIONS];
 	double			file_gamma;
+	png_uint_32     img_height;
+	png_byte        img_color_type, img_bit_depth;
 
 	TPngFileBuffer	PngFileBuffer = {NULL,0};
 
@@ -721,7 +723,8 @@ void LoadPNG (const char *name, byte **pic, int *width, int *height)
 
 	png_read_info(png_ptr, info_ptr);
 
-	if (info_ptr->height > MAX_TEXTURE_DIMENSIONS)
+	img_height = png_get_image_height( png_ptr, info_ptr );
+	if (img_height > MAX_TEXTURE_DIMENSIONS)
 	{
         png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
 		ri.FS_FreeFile (PngFileBuffer.Buffer);
@@ -729,28 +732,30 @@ void LoadPNG (const char *name, byte **pic, int *width, int *height)
 		return;
 	}
 
-	if (info_ptr->color_type == PNG_COLOR_TYPE_PALETTE)
+	img_color_type = png_get_color_type( png_ptr, info_ptr );
+	if (img_color_type == PNG_COLOR_TYPE_PALETTE)
 	{
 		png_set_palette_to_rgb (png_ptr);
 		png_set_filler(png_ptr, 0xFF, PNG_FILLER_AFTER);
 	}
 
-	if (info_ptr->color_type == PNG_COLOR_TYPE_RGB)
+	if (img_color_type == PNG_COLOR_TYPE_RGB)
 		png_set_filler(png_ptr, 0xFF, PNG_FILLER_AFTER);
 
-	if ((info_ptr->color_type == PNG_COLOR_TYPE_GRAY) && info_ptr->bit_depth < 8)
-		png_set_gray_1_2_4_to_8(png_ptr);
+	img_bit_depth = png_get_bit_depth( png_ptr, info_ptr );
+	if ((img_color_type == PNG_COLOR_TYPE_GRAY) && img_bit_depth < 8)
+		png_set_expand_gray_1_2_4_to_8(png_ptr);
 
 	if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
 		png_set_tRNS_to_alpha(png_ptr);
 
-	if (info_ptr->color_type == PNG_COLOR_TYPE_GRAY || info_ptr->color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+	if (img_color_type == PNG_COLOR_TYPE_GRAY || img_color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
 		png_set_gray_to_rgb(png_ptr);
 
-	if (info_ptr->bit_depth == 16)
+	if (img_bit_depth == 16)
 		png_set_strip_16(png_ptr);
 
-	if (info_ptr->bit_depth < 8)
+	if (img_bit_depth < 8)
         png_set_packing(png_ptr);
 
 	if (png_get_gAMA(png_ptr, info_ptr, &file_gamma))
@@ -760,15 +765,15 @@ void LoadPNG (const char *name, byte **pic, int *width, int *height)
 
 	rowbytes = png_get_rowbytes(png_ptr, info_ptr);
 
-	*pic = malloc (info_ptr->height * rowbytes);
+	*pic = malloc (img_height * rowbytes);
 
-	for (i = 0; i < info_ptr->height; i++)
+	for (i = 0; i < img_height; i++)
 		row_pointers[i] = *pic + i*rowbytes;
 
 	png_read_image(png_ptr, row_pointers);
 
-	*width = info_ptr->width;
-	*height = info_ptr->height;
+	*width = png_get_image_width( png_ptr, info_ptr );
+	*height = img_height;
 
 	png_read_end(png_ptr, end_info);
 	png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
@@ -1520,7 +1525,7 @@ void EXPORT jpg_skip_input_data(j_decompress_ptr cinfo, long num_bytes)
     cinfo->src->bytes_in_buffer -= (size_t) num_bytes;
 }
 
-void jpeg_mem_src (j_decompress_ptr cinfo, byte *mem, int len)
+void jpeg_mem_src (j_decompress_ptr cinfo, byte *mem, unsigned long len)
 {
     cinfo->src = (struct jpeg_source_mgr *)(*cinfo->mem->alloc_small)((j_common_ptr) cinfo, JPOOL_PERMANENT, sizeof(struct jpeg_source_mgr));
     cinfo->src->init_source = jpg_null;
