@@ -182,9 +182,9 @@ void S_TransferPaintBuffer(int endtime)
 				p+= step;
 				if (val > 0x7fff)
 					val = 0x7fff;
-				else if (val < (int16)0x8000)
-					val = (int16)0x8000;
-				out[out_idx] = val;
+				else if (val < -32768) // [JoshK] Was (int16)0x8000
+					val = -32768; //
+				out[out_idx] = (int16)val;
 				out_idx = (out_idx + 1) & out_mask;
 			}
 		}
@@ -197,9 +197,9 @@ void S_TransferPaintBuffer(int endtime)
 				p+= step;
 				if (val > 0x7fff)
 					val = 0x7fff;
-				else if (val < (int16)0x8000)
-					val = (int16)0x8000;
-				out[out_idx] = (val>>8) + 128;
+				else if (val < -32768) // [JoshK] Was (int16)0x8000
+					val = -32768; //
+				out[out_idx] = (unsigned char)((val>>8) + 128);
 				out_idx = (out_idx + 1) & out_mask;
 			}
 		}

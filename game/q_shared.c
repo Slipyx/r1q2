@@ -1227,7 +1227,7 @@ skipwhite:
 			}
 			if (len < MAX_TOKEN_CHARS)
 			{
-				com_token[len] = c;
+				com_token[len] = (char)c;
 				len++;
 			}
 		}
@@ -1238,7 +1238,7 @@ skipwhite:
 	{
 		if (len < MAX_TOKEN_CHARS)
 		{
-			com_token[len] = c;
+			com_token[len] = (char)c;
 			len++;
 		}
 		data++;
@@ -1568,7 +1568,7 @@ void Info_SetValueForKey (char *s, const char *key, const char *value)
 		c = *v++;
 		c &= 127;		// strip high bits
 		if (c >= 32 && c < 127)
-			*s++ = c;
+			*s++ = (char)c;
 	}
 	s[0] = 0;
 }
