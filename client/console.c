@@ -507,7 +507,7 @@ void Con_Print (const char *txt)
 
 		default:	// display character and advance
 			y = con.current % con.totallines;
-			con.text[y*con.linewidth+con.x] = c | mask | con.ormask;
+			con.text[y*con.linewidth+con.x] = (char)(c | mask | con.ormask);
 			con.x++;
 			if (con.x >= con.linewidth)
 				con.x = 0;

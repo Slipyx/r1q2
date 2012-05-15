@@ -246,7 +246,7 @@ qboolean Field_Key( menufield_s *f, int key )
 
 		if ( f->cursor < f->length )
 		{
-			f->buffer[f->cursor++] = key;
+			f->buffer[f->cursor++] = (char)key;
 			f->buffer[f->cursor] = 0;
 
 			if ( f->cursor > f->visible_length )

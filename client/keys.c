@@ -726,7 +726,7 @@ void Key_Console (int key)
 
 		memmove (key_lines[edit_line] + key_linepos+1, key_lines[edit_line] + key_linepos, length - key_linepos);
 
-		key_lines[edit_line][key_linepos] = key;
+		key_lines[edit_line][key_linepos] = (char)key;
 		key_linepos++;
 
 		if (!last)
@@ -880,7 +880,7 @@ void Key_Message (int key)
 
 	last = chat_buffer[chat_curbuffer][chat_cursorpos];
 
-	chat_buffer[chat_curbuffer][chat_cursorpos] = key;
+	chat_buffer[chat_curbuffer][chat_cursorpos] = (char)key;
 
 	chat_bufferlen++;
 	chat_cursorpos++;
@@ -939,7 +939,7 @@ char *Key_KeynumToString (int keynum)
 
 	if (keynum > 32 && keynum < 127)
 	{	// printable ascii
-		tinystr[0] = keynum;
+		tinystr[0] = (char)keynum;
 		//tinystr[1] = 0;
 		return tinystr;
 	}

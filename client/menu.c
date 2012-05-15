@@ -2873,7 +2873,7 @@ static void StartServer_MenuInit( void )
 		strcpy( shortname, COM_Parse( &s ) );
 		l = (int)strlen(shortname);
 		for (j=0 ; j<l ; j++)
-			shortname[j] = toupper(shortname[j]);
+			shortname[j] = (char)toupper(shortname[j]);
 		strcpy( longname, COM_Parse( &s ) );
 		Com_sprintf( scratch, sizeof( scratch ), "%s\n%s", longname, shortname );
 

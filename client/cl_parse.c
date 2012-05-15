@@ -423,7 +423,7 @@ void CL_ParseDownload (qboolean dataIsCompressed)
 		uint16		uncompressedLen;
 		byte		uncompressed[0xFFFF];
 
-		uncompressedLen = MSG_ReadShort (&net_message);
+		uncompressedLen = (uint16)MSG_ReadShort (&net_message);
 
 		if (!uncompressedLen)
 			Com_Error (ERR_DROP, "uncompressedLen == 0");
@@ -623,8 +623,8 @@ void CL_ParseZPacket (void)
 
 	sizebuf_t sb, old;
 
-	int16 compressed_len = MSG_ReadShort (&net_message);
-	int16 uncompressed_len = MSG_ReadShort (&net_message);
+	int16 compressed_len = (int16)MSG_ReadShort (&net_message);
+	int16 uncompressed_len = (int16)MSG_ReadShort (&net_message);
 	
 	if (uncompressed_len <= 0)
 		Com_Error (ERR_DROP, "CL_ParseZPacket: uncompressed_len <= 0");

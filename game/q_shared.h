@@ -62,6 +62,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #pragma warning(disable : 4096)		// __cdecl must be used with '...'*/
 #pragma warning(disable : 4142)		//benign redefinition
 
+// [JoshK] Disabling some more warnings from level 4
+#pragma warning(disable : 4100)    // Unreferenced formal parameter
+#pragma warning(disable : 4127)    // Conditional expression is constant
+
 #pragma warning(2 : 4189 4210 4389)	// useful warnings
 
 //"off by default" warnings

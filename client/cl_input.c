@@ -274,8 +274,8 @@ void CL_BaseMove (usercmd_t *cmd)
 	
 	if (in_strafe.state & 1)
 	{	// keyboard strafe
-		cmd->sidemove += (int)(mspeed * cl_sidespeed->value * CL_KeyState (&in_right));
-		cmd->sidemove -= (int)(mspeed * cl_sidespeed->value * CL_KeyState (&in_left));
+		cmd->sidemove += (int16)(mspeed * cl_sidespeed->value * CL_KeyState (&in_right));
+		cmd->sidemove -= (int16)(mspeed * cl_sidespeed->value * CL_KeyState (&in_left));
 	}
 	else
 	{	// keyboard turn
@@ -291,8 +291,8 @@ void CL_BaseMove (usercmd_t *cmd)
 	}	
 	else
 	{	// keyboard move front/back
-		cmd->forwardmove += (int)(mspeed * cl_forwardspeed->value * CL_KeyState (&in_forward));
-		cmd->forwardmove -= (int)(mspeed * cl_forwardspeed->value * CL_KeyState (&in_back));
+		cmd->forwardmove += (int16)(mspeed * cl_forwardspeed->value * CL_KeyState (&in_forward));
+		cmd->forwardmove -= (int16)(mspeed * cl_forwardspeed->value * CL_KeyState (&in_back));
 	}
 	
 	// keyboard look up/down
@@ -300,28 +300,28 @@ void CL_BaseMove (usercmd_t *cmd)
 	cl.viewangles[PITCH] += tspeed*cl_pitchspeed->value * CL_KeyState(&in_lookdown);
 	
 	// keyboard strafe left/right
-	cmd->sidemove += (int)(mspeed * cl_sidespeed->value * CL_KeyState (&in_moveright));
-	cmd->sidemove -= (int)(mspeed * cl_sidespeed->value * CL_KeyState (&in_moveleft));
+	cmd->sidemove += (int16)(mspeed * cl_sidespeed->value * CL_KeyState (&in_moveright));
+	cmd->sidemove -= (int16)(mspeed * cl_sidespeed->value * CL_KeyState (&in_moveleft));
 
 	// keyboard jump/crouch
-	cmd->upmove += (int)(mspeed * cl_upspeed->value * CL_KeyState (&in_up));
-	cmd->upmove -= (int)(mspeed * cl_upspeed->value * CL_KeyState (&in_down));
+	cmd->upmove += (int16)(mspeed * cl_upspeed->value * CL_KeyState (&in_up));
+	cmd->upmove -= (int16)(mspeed * cl_upspeed->value * CL_KeyState (&in_down));
 
 	//r1ch: cap to max allowed ranges
 	if (cmd->forwardmove > cl_forwardspeed->value * mspeed)
-		cmd->forwardmove = (int)(cl_forwardspeed->value * mspeed);
+		cmd->forwardmove = (int16)(cl_forwardspeed->value * mspeed);
 	else if (cmd->forwardmove < -cl_forwardspeed->value * mspeed)
-		cmd->forwardmove = -(int)(cl_forwardspeed->value * mspeed);
+		cmd->forwardmove = -(int16)(cl_forwardspeed->value * mspeed);
 
 	if (cmd->sidemove > cl_sidespeed->value * mspeed)
-		cmd->sidemove = (int)(cl_sidespeed->value * mspeed);
+		cmd->sidemove = (int16)(cl_sidespeed->value * mspeed);
 	else if (cmd->sidemove < -cl_sidespeed->value * mspeed)
-		cmd->sidemove = -(int)(cl_sidespeed->value * mspeed);
+		cmd->sidemove = -(int16)(cl_sidespeed->value * mspeed);
 
 	if (cmd->upmove > cl_upspeed->value * mspeed)
-		cmd->upmove = (int)(cl_upspeed->value * mspeed);
+		cmd->upmove = (int16)(cl_upspeed->value * mspeed);
 	else if (cmd->upmove < -cl_upspeed->value * mspeed)
-		cmd->upmove = -(int)(cl_upspeed->value * mspeed);
+		cmd->upmove = -(int16)(cl_upspeed->value * mspeed);
 }
 
 void CL_ClampPitch (void)
@@ -406,7 +406,7 @@ void CL_RefreshCmd (void)
 	if (ms > 250)
 		ms = 100;
 
-	cmd->msec = ms;
+	cmd->msec = (byte)ms;
 
 	//update counter
 	old_sys_frame_time = sys_frame_time;
@@ -443,7 +443,7 @@ void CL_FinalizeCmd (void)
 		cmd->buttons |= BUTTON_ANY;
 
 	//...
-	cmd->impulse = in_impulse;
+	cmd->impulse = (byte)in_impulse;
 	in_impulse = 0;
 
 	//Com_Printf ("up:%d, side:%d f:%d\n", LOG_CLIENT, cmd->upmove, cmd->sidemove, cmd->forwardmove);
@@ -571,20 +571,20 @@ void CL_BaseMove_Synchronous (usercmd_t *cmd)
 
 	if (in_strafe.state & 1)
 	{
-		cmd->sidemove += (int)(cl_sidespeed->value * CL_KeyState (&in_right));
-		cmd->sidemove -= (int)(cl_sidespeed->value * CL_KeyState (&in_left));
+		cmd->sidemove += (int16)(cl_sidespeed->value * CL_KeyState (&in_right));
+		cmd->sidemove -= (int16)(cl_sidespeed->value * CL_KeyState (&in_left));
 	}
 
-	cmd->sidemove += (int)(cl_sidespeed->value * CL_KeyState (&in_moveright));
-	cmd->sidemove -= (int)(cl_sidespeed->value * CL_KeyState (&in_moveleft));
+	cmd->sidemove += (int16)(cl_sidespeed->value * CL_KeyState (&in_moveright));
+	cmd->sidemove -= (int16)(cl_sidespeed->value * CL_KeyState (&in_moveleft));
 
-	cmd->upmove += (int)(cl_upspeed->value * CL_KeyState (&in_up));
-	cmd->upmove -= (int)(cl_upspeed->value * CL_KeyState (&in_down));
+	cmd->upmove += (int16)(cl_upspeed->value * CL_KeyState (&in_up));
+	cmd->upmove -= (int16)(cl_upspeed->value * CL_KeyState (&in_down));
 
 	if (! (in_klook.state & 1) )
 	{	
-		cmd->forwardmove += (int)(cl_forwardspeed->value * CL_KeyState (&in_forward));
-		cmd->forwardmove -= (int)(cl_forwardspeed->value * CL_KeyState (&in_back));
+		cmd->forwardmove += (int16)(cl_forwardspeed->value * CL_KeyState (&in_forward));
+		cmd->forwardmove -= (int16)(cl_forwardspeed->value * CL_KeyState (&in_back));
 	}	
 
 //
@@ -622,13 +622,13 @@ void CL_FinishMove (usercmd_t *cmd)
 	ms = (int)(cls.frametime * 1000);
 	if (ms > 250)
 		ms = 100;		// time was unreasonable
-	cmd->msec = ms;
+	cmd->msec = (byte)ms;
 
 	CL_ClampPitch ();
 	for (i=0 ; i<3 ; i++)
 		cmd->angles[i] = ANGLE2SHORT(cl.viewangles[i]);
 
-	cmd->impulse = in_impulse;
+	cmd->impulse = (byte)in_impulse;
 	in_impulse = 0;
 
 	//update (7588+), we use 400 since water move physics is "buggy" in that it uses uncapped usercmd

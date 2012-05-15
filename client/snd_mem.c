@@ -96,9 +96,9 @@ void ResampleSfx (sfx_t *sfx, int inrate, int inwidth, byte *data)
 			else
 				sample = (int32)( (unsigned char)(data[srcsample]) - 128) << 8;
 			if (sc->width == 2)
-				((int16 *)sc->data)[i] = sample;
+				((int16 *)sc->data)[i] = (int16)sample;
 			else
-				((signed char *)sc->data)[i] = sample >> 8;
+				((signed char *)sc->data)[i] = (signed char)(sample >> 8);
 		}
 	}
 }
