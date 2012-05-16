@@ -1189,7 +1189,7 @@ static void SVC_DirectConnect (void)
 		return;
 	}
 
-	qport = atoi(Cmd_Argv(2));
+	qport = (uint16)atoi(Cmd_Argv(2));
 
 	if (protocol == PROTOCOL_R1Q2)
 	{
@@ -2691,7 +2691,7 @@ static void SV_CheckTimeouts (void)
 					cl->lastcmd.msec = 100;
 					//SV_ClientThink (cl, cl->lastcmd);
 					ge->ClientThink (cl->edict, &cl->lastcmd);
-					cl->lastcmd.msec = old;
+					cl->lastcmd.msec = (byte)old;
 				}
 
 
