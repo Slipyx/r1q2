@@ -1152,9 +1152,9 @@ static void PM_SnapPosition (void)
 	const static int jitterbits[8] = {0,4,1,2,3,5,6,7};
 
 	// snap velocity to eigths
-	pm->s.velocity[0] = (int)(pml.velocity[0]*8);
-	pm->s.velocity[1] = (int)(pml.velocity[1]*8);
-	pm->s.velocity[2] = (int)(pml.velocity[2]*8);
+	pm->s.velocity[0] = (int16)(pml.velocity[0]*8);
+	pm->s.velocity[1] = (int16)(pml.velocity[1]*8);
+	pm->s.velocity[2] = (int16)(pml.velocity[2]*8);
 
 	for (i=0 ; i<3 ; i++)
 	{
@@ -1162,7 +1162,7 @@ static void PM_SnapPosition (void)
 			sign[i] = 1;
 		else 
 			sign[i] = -1;
-		pm->s.origin[i] = (int)(pml.origin[i]*8);
+		pm->s.origin[i] = (int16)(pml.origin[i]*8);
 		if (pm->s.origin[i]*0.125f == pml.origin[i])
 			sign[i] = 0;
 	}
@@ -1178,7 +1178,7 @@ static void PM_SnapPosition (void)
 		VectorCopy (base, pm->s.origin);
 		for (i=0 ; i<3 ; i++)
 			if (bits & (1<<i) )
-				pm->s.origin[i] += sign[i];
+				pm->s.origin[i] += (int16)sign[i];
 
 		if (PM_GoodPosition ())
 			return;
@@ -1248,13 +1248,13 @@ static void PM_InitialSnapPosition(void)
 
 	for ( z = 0; z < 3; z++ )
 	{
-		pm->s.origin[2] = base[2] + offset[ z ];
+		pm->s.origin[2] = (int16)(base[2] + offset[ z ]);
 		for ( y = 0; y < 3; y++ )
 		{
-			pm->s.origin[1] = base[1] + offset[ y ];
+			pm->s.origin[1] = (int16)(base[1] + offset[ y ]);
 			for ( x = 0; x < 3; x++ )
 			{
-				pm->s.origin[0] = base[0] + offset[ x ];
+				pm->s.origin[0] = (int16)(base[0] + offset[ x ]);
 				if (PM_GoodPosition ())
 				{
 					pml.origin[0] = pm->s.origin[0]*0.125f;
@@ -1397,7 +1397,7 @@ void Pmove (pmove_new_t *pmove)
 			pm->s.pm_time = 0;
 		}
 		else
-			pm->s.pm_time -= msec;
+			pm->s.pm_time -= (byte)msec;
 	}
 
 	if (pm->s.pm_flags & PMF_TIME_TELEPORT)
