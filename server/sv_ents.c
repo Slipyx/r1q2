@@ -1160,12 +1160,12 @@ void SV_WriteFrameToClient (client_t *client, sizebuf_t *msg)
 	if (client->protocol == PROTOCOL_R1Q2)
 	{
 		msg->data[serverByteIndex] = svc_frame + ((extraflags & 0xF0) << 1);
-		msg->data[extraDataIndex] = client->surpressCount + ((extraflags & 0x0F) << 4);
+		msg->data[extraDataIndex] = (byte)(client->surpressCount + ((extraflags & 0x0F) << 4));
 	}
 	else
 	{
 		msg->data[serverByteIndex] = svc_frame;
-		msg->data[extraDataIndex] = client->surpressCount;
+		msg->data[extraDataIndex] = (byte)client->surpressCount;
 	}
 
 	client->surpressCount = 0;
