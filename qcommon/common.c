@@ -582,7 +582,7 @@ void MSG_WriteChar (int c)
 	Q_assert (!(c < -128 || c > 127));
 
 	buf = SZ_GetSpace (&msgbuff, 1);
-	buf[0] = c;
+	buf[0] = (byte)c;
 }
 
 void MSG_BeginWriting (int c)
@@ -601,7 +601,7 @@ void MSG_BeginWriting (int c)
 #endif
 
 	buf = SZ_GetSpace (&msgbuff, 1);
-	buf[0] = c;
+	buf[0] = (byte)c;
 }
 
 void MSG_WriteByte (int c)
@@ -615,7 +615,7 @@ void MSG_WriteByte (int c)
 	Q_assert (!(c < 0 || c > 255));
 
 	buf = SZ_GetSpace (&msgbuff, 1);
-	buf[0] = c;
+	buf[0] = (byte)c;
 }
 
 void MSG_WriteShort (int c)
@@ -661,7 +661,7 @@ void SZ_WriteByte (sizebuf_t *sbuf, int c)
 	Q_assert (!(c < 0 || c > 255));
 
 	buf = SZ_GetSpace (sbuf, 1);
-	buf[0] = c;
+	buf[0] = (byte)c;
 }
 
 void MSG_WriteLong (int c)
@@ -810,7 +810,7 @@ void MSG_EndWrite (messagelist_t *out)
 #endif
 
 	memcpy (out->data, message_buff, msgbuff.cursize);
-	out->cursize = msgbuff.cursize;
+	out->cursize = (int16)msgbuff.cursize;
 }
 
 void MSG_WriteCoord (float f)
@@ -1096,7 +1096,7 @@ char *MSG_ReadString (sizebuf_t *msg_read)
 		c = MSG_ReadByte (msg_read);
 		if (c == -1 || c == 0)
 			break;
-		string[l] = c;
+		string[l] = (char)c;
 		l++;
 	} while (l < sizeof(string)-1);
 	
@@ -1116,7 +1116,7 @@ char *MSG_ReadStringLine (sizebuf_t *msg_read)
 		c = MSG_ReadByte (msg_read);
 		if (c == -1 || c == 0 || c == '\n')
 			break;
-		string[l] = c;
+		string[l] = (char)c;
 		l++;
 	} while (l < sizeof(string)-1);
 	
@@ -1180,10 +1180,10 @@ void MSG_ReadDeltaUsercmd (sizebuf_t *msg_read, usercmd_t *from, usercmd_t /*@ou
 			#ifndef NPROFILE
 			r1q2UserCmdOptimizedBytes++;
 			#endif
-			move->angles[0] = MSG_ReadChar (msg_read) * 64;
+			move->angles[0] = (int16)(MSG_ReadChar (msg_read) * 64);
 		}
 		else
-			move->angles[0] = MSG_ReadShort (msg_read);
+			move->angles[0] = (int16)MSG_ReadShort (msg_read);
 	}
 
 	if (bits & CM_ANGLE2)
@@ -1193,14 +1193,14 @@ void MSG_ReadDeltaUsercmd (sizebuf_t *msg_read, usercmd_t *from, usercmd_t /*@ou
 			#ifndef NPROFILE
 			r1q2UserCmdOptimizedBytes++;
 			#endif
-			move->angles[1] = MSG_ReadChar (msg_read) * 256;
+			move->angles[1] = (int16)(MSG_ReadChar (msg_read) * 256);
 		}
 		else
-			move->angles[1] = MSG_ReadShort (msg_read);
+			move->angles[1] = (int16)MSG_ReadShort (msg_read);
 	}
 
 	if (bits & CM_ANGLE3)
-		move->angles[2] = MSG_ReadShort (msg_read);
+		move->angles[2] = (int16)MSG_ReadShort (msg_read);
 		
 // read movement
 	if (bits & CM_FORWARD)
@@ -1210,10 +1210,10 @@ void MSG_ReadDeltaUsercmd (sizebuf_t *msg_read, usercmd_t *from, usercmd_t /*@ou
 			#ifndef NPROFILE
 			r1q2UserCmdOptimizedBytes++;
 			#endif
-			move->forwardmove = MSG_ReadChar (msg_read) * 5;
+			move->forwardmove = (int16)(MSG_ReadChar (msg_read) * 5);
 		}
 		else
-			move->forwardmove = MSG_ReadShort (msg_read);
+			move->forwardmove = (int16)MSG_ReadShort (msg_read);
 	}
 
 	if (bits & CM_SIDE)
@@ -1223,10 +1223,10 @@ void MSG_ReadDeltaUsercmd (sizebuf_t *msg_read, usercmd_t *from, usercmd_t /*@ou
 			#ifndef NPROFILE
 			r1q2UserCmdOptimizedBytes++;
 			#endif
-			move->sidemove = MSG_ReadChar (msg_read) * 5;
+			move->sidemove = (int16)(MSG_ReadChar (msg_read) * 5);
 		}
 		else
-			move->sidemove = MSG_ReadShort (msg_read);
+			move->sidemove = (int16)MSG_ReadShort (msg_read);
 	}
 
 	if (bits & CM_UP)
@@ -1236,21 +1236,21 @@ void MSG_ReadDeltaUsercmd (sizebuf_t *msg_read, usercmd_t *from, usercmd_t /*@ou
 			#ifndef NPROFILE
 			r1q2UserCmdOptimizedBytes++;
 			#endif
-			move->upmove = MSG_ReadChar (msg_read) * 5;
+			move->upmove = (int16)(MSG_ReadChar (msg_read) * 5);
 		}
 		else
-			move->upmove = MSG_ReadShort (msg_read);
+			move->upmove = (int16)MSG_ReadShort (msg_read);
 	}
 	
 // read buttons
 	if (protocol < MINOR_VERSION_R1Q2_UCMD_UPDATES)
 	{
 		if (bits & CM_BUTTONS)
-			move->buttons = MSG_ReadByte (msg_read);
+			move->buttons = (byte)MSG_ReadByte (msg_read);
 	}
 
 	if (bits & CM_IMPULSE)
-		move->impulse = MSG_ReadByte (msg_read);
+		move->impulse = (byte)MSG_ReadByte (msg_read);
 
 // read time to run command
 	msec = MSG_ReadByte (msg_read);
@@ -1258,10 +1258,10 @@ void MSG_ReadDeltaUsercmd (sizebuf_t *msg_read, usercmd_t *from, usercmd_t /*@ou
 	if (msec > 250)
 		Com_Printf ("MSG_ReadDeltaUsercmd: funky msec (%d)!\n", LOG_GENERAL, msec);
 
-	move->msec = msec;
+	move->msec = (byte)msec;
 
 // read the light level
-	move->lightlevel = MSG_ReadByte (msg_read);
+	move->lightlevel = (byte)MSG_ReadByte (msg_read);
 }
 
 
@@ -1270,7 +1270,7 @@ void MSG_ReadData (sizebuf_t *msg_read, void *data, int len)
 	int		i;
 
 	for (i=0 ; i<len ; i++)
-		((byte *)data)[i] = MSG_ReadByte (msg_read);
+		((byte *)data)[i] = (byte)MSG_ReadByte (msg_read);
 }
 
 
@@ -1787,7 +1787,7 @@ RESTRICT void * EXPORT Z_TagMallocDebug (int size, int tag)
 	z_bytes += size;
 
 	z->magic = Z_MAGIC_DEBUG;
-	z->tag = tag;
+	z->tag = (int16)tag;
 	z->size = size;
 
 #if defined _WIN32
@@ -1861,7 +1861,7 @@ RESTRICT void * EXPORT Z_TagMallocRelease (int size, int tag)
 #endif
 
 	z->magic = Z_MAGIC;
-	z->tag = tag;
+	z->tag = (int16)tag;
 	z->size = size;
 
 	z->next = z_chain.next;

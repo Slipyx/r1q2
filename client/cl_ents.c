@@ -1023,38 +1023,38 @@ static void CL_ParsePlayerstate (const frame_t *oldframe, frame_t *newframe, int
 	{
 		if (!enhanced)
 			extraflags |= EPS_PMOVE_ORIGIN2;
-		state->pmove.origin[0] = MSG_ReadShort (&net_message);
-		state->pmove.origin[1] = MSG_ReadShort (&net_message);
+		state->pmove.origin[0] = (int16)MSG_ReadShort (&net_message);
+		state->pmove.origin[1] = (int16)MSG_ReadShort (&net_message);
 	}
 
 	if (extraflags & EPS_PMOVE_ORIGIN2)
-		state->pmove.origin[2] = MSG_ReadShort (&net_message);
+		state->pmove.origin[2] = (int16)MSG_ReadShort (&net_message);
 
 	if (flags & PS_M_VELOCITY)
 	{
 		if (!enhanced)
 			extraflags |= EPS_PMOVE_VELOCITY2;
-		state->pmove.velocity[0] = MSG_ReadShort (&net_message);
-		state->pmove.velocity[1] = MSG_ReadShort (&net_message);
+		state->pmove.velocity[0] = (int16)MSG_ReadShort (&net_message);
+		state->pmove.velocity[1] = (int16)MSG_ReadShort (&net_message);
 	}
 
 	if (extraflags & EPS_PMOVE_VELOCITY2)
-		state->pmove.velocity[2] = MSG_ReadShort (&net_message);
+		state->pmove.velocity[2] = (int16)MSG_ReadShort (&net_message);
 
 	if (flags & PS_M_TIME)
-		state->pmove.pm_time = MSG_ReadByte (&net_message);
+		state->pmove.pm_time = (byte)MSG_ReadByte (&net_message);
 
 	if (flags & PS_M_FLAGS)
-		state->pmove.pm_flags = MSG_ReadByte (&net_message);
+		state->pmove.pm_flags = (byte)MSG_ReadByte (&net_message);
 
 	if (flags & PS_M_GRAVITY)
-		state->pmove.gravity = MSG_ReadShort (&net_message);
+		state->pmove.gravity = (int16)MSG_ReadShort (&net_message);
 
 	if (flags & PS_M_DELTA_ANGLES)
 	{
-		state->pmove.delta_angles[0] = MSG_ReadShort (&net_message);
-		state->pmove.delta_angles[1] = MSG_ReadShort (&net_message);
-		state->pmove.delta_angles[2] = MSG_ReadShort (&net_message);
+		state->pmove.delta_angles[0] = (int16)MSG_ReadShort (&net_message);
+		state->pmove.delta_angles[1] = (int16)MSG_ReadShort (&net_message);
+		state->pmove.delta_angles[2] = (int16)MSG_ReadShort (&net_message);
 	}
 
 	if (cl.attractloop)
@@ -1163,7 +1163,7 @@ static void CL_ParsePlayerstate (const frame_t *oldframe, frame_t *newframe, int
 		{
 			for (i=0 ; i<MAX_STATS ; i++)
 				if (statbits & (1<<i) )
-					state->stats[i] = MSG_ReadShort(&net_message);
+					state->stats[i] = (int16)MSG_ReadShort(&net_message);
 		}
 	}
 }
@@ -1324,7 +1324,7 @@ void CL_ParseFrame (int extrabits)
 	if (cls.serverProtocol != 26)
 	{
 		byte	data;
-		data = MSG_ReadByte (&net_message);
+		data = (byte)MSG_ReadByte (&net_message);
 
 		//r1: HACK to get extra 4 bits of otherwise unused data
 		if (cls.serverProtocol == PROTOCOL_R1Q2)
@@ -1385,7 +1385,7 @@ void CL_ParseFrame (int extrabits)
 	// read playerinfo
 	if (cls.serverProtocol != PROTOCOL_R1Q2)
 	{
-		cmd = MSG_ReadByte (&net_message);
+		cmd = (byte)MSG_ReadByte (&net_message);
 		SHOWNET(svc_strings[cmd]);
 		if (cmd != svc_playerinfo)
 			Com_Error (ERR_DROP, "CL_ParseFrame: 0x%.2x not playerinfo", cmd);
@@ -1400,7 +1400,7 @@ void CL_ParseFrame (int extrabits)
 	// read packet entities
 	if (cls.serverProtocol != PROTOCOL_R1Q2)
 	{
-		cmd = MSG_ReadByte (&net_message);
+		cmd = (byte)MSG_ReadByte (&net_message);
 		SHOWNET(svc_strings[cmd]);
 		if (cmd != svc_packetentities)
 			Com_Error (ERR_DROP, "CL_ParseFrame: 0x%.2x not packetentities", cmd);

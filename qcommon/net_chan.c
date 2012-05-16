@@ -223,8 +223,8 @@ void Netchan_Setup (netsrc_t sock, netchan_t *chan, netadr_t *adr, int protocol,
 		SZ_Init (&chan->message, chan->message_buf, 1390);			//traditional limit
 	}
 
-	chan->qport = qport;
-	chan->protocol = protocol;
+	chan->qport = (uint16)qport;
+	chan->protocol = (uint16)protocol;
 	chan->last_received = curtime;
 	chan->incoming_sequence = 0;
 	chan->outgoing_sequence = 1;

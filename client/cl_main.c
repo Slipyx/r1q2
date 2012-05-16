@@ -1591,7 +1591,7 @@ void CL_ProxyPacket (void)
 		port = atoi (Cmd_Argv(1));
 
 		if (port >= 1024)
-			net_from.port = ShortSwap(port);
+			net_from.port = ShortSwap((int16)port);
 
 		NET_SetProxy (&net_from);
 		cls.proxyAddr = net_from;

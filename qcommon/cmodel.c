@@ -914,10 +914,10 @@ void CM_InitBoxHull (void)
 
 	box_leaf = &map_leafs[numleafs];
 	box_leaf->contents = CONTENTS_MONSTER;
-	box_leaf->firstleafbrush = numleafbrushes;
+	box_leaf->firstleafbrush = (uint16)numleafbrushes;
 	box_leaf->numleafbrushes = 1;
 
-	map_leafbrushes[numleafbrushes] = numbrushes;
+	map_leafbrushes[numleafbrushes] = (uint16)numbrushes;
 
 	for (i=0 ; i<6 ; i++)
 	{
@@ -941,13 +941,13 @@ void CM_InitBoxHull (void)
 
 		// planes
 		p = &box_planes[i*2];
-		p->type = i>>1;
+		p->type = (byte)(i>>1);
 		p->signbits = 0;
 		VectorClear (p->normal);
 		p->normal[i>>1] = 1;
 
 		p = &box_planes[i*2+1];
-		p->type = 3 + (i>>1);
+		p->type = (byte)(3 + (i>>1));
 		p->signbits = 0;
 		VectorClear (p->normal);
 		p->normal[i>>1] = -1;
