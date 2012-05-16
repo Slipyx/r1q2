@@ -1004,7 +1004,7 @@ do { \
 #define Com_DPrintf _Com_DPrintf
 #endif
 
-void		Com_BeginRedirect (int target, char *buffer, int buffersize, void (*flush));
+void		Com_BeginRedirect (int target, char *buffer, int buffersize, void (*flush)(int, char *));
 void		Com_EndRedirect (qboolean flush);
 void 		_Com_DPrintf (const char *fmt, ...) __attribute__ ((format (printf, 1, 2)));
 void 		Com_Printf (const char *fmt, int level, ...) __attribute__ ((format (printf, 1, 3)));
