@@ -709,7 +709,7 @@ void IN_ReadBufferedData( usercmd_t *cmd )
 				
 				// add mouse X/Y movement to cmd
 				if ( (in_strafe.state & 1) || (lookstrafe->intvalue && mlooking ))
-					cmd->sidemove += (int)(m_side->value * val);
+					cmd->sidemove += (int16)(m_side->value * val);
 				else
 					cl.viewangles[YAW] -= m_yaw->value * val;
 
@@ -729,7 +729,7 @@ void IN_ReadBufferedData( usercmd_t *cmd )
 				if ( (mlooking || freelook->intvalue) && !(in_strafe.state & 1))
 					cl.viewangles[PITCH] += m_pitch->value * val;
 				else
-					cmd->forwardmove -= (int)(m_forward->value * val);
+					cmd->forwardmove -= (int16)(m_forward->value * val);
 
 #ifdef _DEBUG
 				//fix non-exclusive mouse being able to click window titlebar
@@ -905,14 +905,14 @@ void IN_ReadImmediateData (usercmd_t *cmd)
 
 	// add mouse X/Y movement to cmd
 	if ( (in_strafe.state & 1) || (lookstrafe->intvalue && mlooking ))
-		cmd->sidemove += (int)(m_side->value * mx);
+		cmd->sidemove += (int16)(m_side->value * mx);
 	else
 		cl.viewangles[YAW] -= m_yaw->value * mx;
 
 	if ( (mlooking || freelook->intvalue) && !(in_strafe.state & 1))
 		cl.viewangles[PITCH] += m_pitch->value * my;
 	else
-		cmd->forwardmove -= (int)(m_forward->value * my);
+		cmd->forwardmove -= (int16)(m_forward->value * my);
 
 	return;
 }
@@ -1192,7 +1192,7 @@ void IN_MouseMove (usercmd_t *cmd)
 
 // add mouse X/Y movement to cmd
 	if ( (in_strafe.state & 1) || (lookstrafe->intvalue && mlooking ))
-		cmd->sidemove += (int)(m_side->value * mouse_x);
+		cmd->sidemove += (int16)(m_side->value * mouse_x);
 	else
 		cl.viewangles[YAW] -= m_yaw->value * mouse_x;
 
@@ -1202,7 +1202,7 @@ void IN_MouseMove (usercmd_t *cmd)
 	}
 	else
 	{
-		cmd->forwardmove -= (int)(m_forward->value * mouse_y);
+		cmd->forwardmove -= (int16)(m_forward->value * mouse_y);
 	}
 
 	// force the mouse to the center, so there's room to move

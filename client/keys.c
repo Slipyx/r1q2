@@ -475,7 +475,7 @@ void Key_Console (int key)
 			char	*p, *s;
 
 			p = cbd;
-			while ((p = strchr (p, '\r')))
+			while ((p = strchr (p, '\r')) != NULL)
 				p[0] = ' ';
 
 			//r1: multiline paste

@@ -2039,7 +2039,7 @@ void CL_ReadPackets (void)
 	memset (net_message_buffer, 31, sizeof(net_message_buffer));
 #endif
 
-	while ((i = (NET_GetPacket (NS_CLIENT, &net_from, &net_message))))
+	while ((i = (NET_GetPacket (NS_CLIENT, &net_from, &net_message))) != 0 )
 	{
 		//
 		// remote command packet

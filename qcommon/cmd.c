@@ -465,7 +465,7 @@ void Cmd_Exec_f (void)
 	path = Cmd_Argv(1);
 
 	//r1: normalize
-	while ((p = strchr (path, '\\')))
+	while ((p = strchr (path, '\\')) != NULL)
 		p[0] = '/';
 
 	//r1: deny traversing outside the q2 directory
@@ -515,7 +515,7 @@ void Cmd_Exec_f (void)
 	f2[len] = '\n';
 	f2[len+1] = 0;
 
-	if ((p = strchr(f2, '\r')) && *(p+1) != '\n')
+	if ((p = strchr(f2, '\r')) != NULL && *(p+1) != '\n')
 		Com_Printf ("WARNING: Raw \\r found in config file %s\n", LOG_GENERAL|LOG_WARNING, path);
 
 	Cbuf_InsertText (f2);

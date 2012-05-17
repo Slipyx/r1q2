@@ -194,14 +194,14 @@ static char	*rd_buffer;
 static int	rd_buffersize;
 static void	(*rd_flush)(int target, char *buffer);
 
-void Com_BeginRedirect (int target, char *buffer, int buffersize, void *flush)
+void Com_BeginRedirect (int target, char *buffer, int buffersize, void (*flush)(int, char *))
 {
 	if (!target || !buffer || !buffersize || !flush)
 		return;
 	rd_target = target;
 	rd_buffer = buffer;
 	rd_buffersize = buffersize;
-	rd_flush = (void (*)(int, char *))flush;
+	rd_flush = flush;
 
 	*rd_buffer = 0;
 }
@@ -494,7 +494,7 @@ void Com_Error (int code, const char *fmt, ...)
 	}
 
 	Sys_Error ("%s", msg);
-	recursive = false;
+	//recursive = false; // [JoshK] Warning C4702: Unreachable code
 }
 
 
@@ -2583,7 +2583,7 @@ int ZLibDecompress (byte *in, int inlen, byte *out, int outlen, int wbits)
 	if (result != Z_OK)
 	{
 		Com_Error (ERR_DROP, "ZLib data error! Error %d on inflateInit.\nMessage: %s", result, zs.msg);
-		return 0;
+		//return 0; // [JoshK] Warning C4702: Unreachable code
 	}
 
 	zs.avail_in = inlen;
@@ -2592,14 +2592,14 @@ int ZLibDecompress (byte *in, int inlen, byte *out, int outlen, int wbits)
 	if (result != Z_STREAM_END)
 	{
 		Com_Error (ERR_DROP, "ZLib data error! Error %d on inflate.\nMessage: %s", result, zs.msg);
-		zs.total_out = 0;
+		//zs.total_out = 0; // [JoshK] Warning C4702: Unreachable code
 	}
 
 	result = inflateEnd(&zs);
 	if (result != Z_OK)
 	{
 		Com_Error (ERR_DROP, "ZLib data error! Error %d on inflateEnd.\nMessage: %s", result, zs.msg);
-		return 0;
+		//return 0; // [JoshK] Warning C4702: Unreachable code
 	}
 
 	return zs.total_out;
