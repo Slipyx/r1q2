@@ -796,13 +796,13 @@ char *Sys_ConsoleInput (void)
 
 		for ( ;; )
 		{
-			if (!GetNumberOfConsoleInputEvents (hinput, &numevents))
+			if (!GetNumberOfConsoleInputEvents (hinput, (LPDWORD)&numevents))
 				Sys_Error ("Error getting # of console events");
 
 			if (numevents <= 0)
 				break;
 
-			if (!ReadConsoleInput(hinput, recs, 1, &numread))
+			if (!ReadConsoleInput(hinput, recs, 1, (LPDWORD)&numread))
 				Sys_Error ("Error reading console input");
 
 			if (numread != 1)
@@ -817,7 +817,7 @@ char *Sys_ConsoleInput (void)
 					switch (ch)
 					{
 						case '\r':
-							WriteFile(houtput, "\r\n", 2, &dummy, NULL);	
+							WriteFile(houtput, "\r\n", 2, (LPDWORD)&dummy, NULL);	
 
 							if (console_textlen)
 							{
@@ -836,7 +836,7 @@ char *Sys_ConsoleInput (void)
 							if (console_textlen)
 							{
 								console_textlen--;
-								WriteFile(houtput, "\b \b", 3, &dummy, NULL);	
+								WriteFile(houtput, "\b \b", 3, (LPDWORD)&dummy, NULL);	
 							}
 							break;
 
@@ -845,8 +845,8 @@ char *Sys_ConsoleInput (void)
 							{
 								if (console_textlen < sizeof(console_text)-2)
 								{
-									WriteFile(houtput, &ch, 1, &dummy, NULL);	
-									console_text[console_textlen] = ch;
+									WriteFile(houtput, &ch, 1, (LPDWORD)&dummy, NULL);	
+									console_text[console_textlen] = (char)ch;
 									console_textlen++;
 								}
 							}
@@ -901,13 +901,13 @@ void Sys_ConsoleOutputOld (const char *string)
 		memset(&text[1], ' ', console_textlen);
 		text[console_textlen+1] = '\r';
 		text[console_textlen+2] = 0;
-		WriteFile(houtput, text, console_textlen+2, &dummy, NULL);
+		WriteFile(houtput, text, console_textlen+2, (LPDWORD)&dummy, NULL);
 	}
 
-	WriteFile(houtput, cleanstring, (DWORD)strlen(cleanstring), &dummy, NULL);
+	WriteFile(houtput, cleanstring, (DWORD)strlen(cleanstring), (LPDWORD)&dummy, NULL);
 
 	if (console_textlen)
-		WriteFile(houtput, console_text, console_textlen, &dummy, NULL);
+		WriteFile(houtput, console_text, console_textlen, (LPDWORD)&dummy, NULL);
 }
 
 /*
@@ -1506,7 +1506,7 @@ BOOL CALLBACK EnumerateLoadedModulesProcDump (PSTR ModuleName, DWORD64 ModuleBas
 			verInfo = LocalAlloc (LPTR, len);
 			if (fnGetFileVersionInfo (ModuleName, dummy, len, verInfo))
 			{
-				if (fnVerQueryValue (verInfo, "\\", (LPVOID)&fileVersion, &dummy))
+				if (fnVerQueryValue (verInfo, "\\", (LPVOID)&fileVersion, (PUINT)&dummy))
 				{
 					if (strstr (lowered, "ref_gl"))
 						versionedGL = TRUE;
@@ -2456,7 +2456,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 
 	__try
 	{
-		Sys_SetFPU (sys_fpu_bits->intvalue);
+		Sys_SetFPU ((byte)sys_fpu_bits->intvalue);
 		Sys_CheckFPUStatus ();
 
 		Qcommon_Init (argc, argv);
@@ -2552,7 +2552,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 			else
 				goodspins++;
 
-			Sys_SetFPU (sys_fpu_bits->intvalue);
+			Sys_SetFPU ((byte)sys_fpu_bits->intvalue);
 			//Sys_CheckFPUStatus ();
 			Qcommon_Frame (time);
 

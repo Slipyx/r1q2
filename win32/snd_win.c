@@ -133,8 +133,8 @@ static qboolean DS_CreateBuffers( void )
 
 	memset (&format, 0, sizeof(format));
 	format.wFormatTag = WAVE_FORMAT_PCM;
-    format.nChannels = dma.channels;
-    format.wBitsPerSample = dma.samplebits;
+    format.nChannels = (WORD)dma.channels;
+    format.wBitsPerSample = (WORD)dma.samplebits;
     format.nSamplesPerSec = dma.speed;
     format.nBlockAlign = format.nChannels * format.wBitsPerSample / 8;
     format.cbSize = sizeof(WAVEFORMATEX);
@@ -512,8 +512,8 @@ qboolean SNDDMA_InitWav (void)
 
 	memset (&format, 0, sizeof(format));
 	format.wFormatTag = WAVE_FORMAT_PCM;
-	format.nChannels = dma.channels;
-	format.wBitsPerSample = dma.samplebits;
+	format.nChannels = (WORD)dma.channels;
+	format.wBitsPerSample = (WORD)dma.samplebits;
 	format.nSamplesPerSec = dma.speed;
 	format.nBlockAlign = format.nChannels
 		*format.wBitsPerSample / 8;
