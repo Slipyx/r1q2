@@ -106,7 +106,7 @@ qboolean	NET_StringToSockaddr (const char *s, struct sockaddr *sadr)
 	}
 	else
 	{
-		if (! (h = gethostbyname(copy)) )
+		if ((h = gethostbyname(copy)) == NULL )
 			return false;
 		*(int *)&((struct sockaddr_in *)sadr)->sin_addr = *(int *)h->h_addr_list[0];
 	}

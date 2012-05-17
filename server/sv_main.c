@@ -2109,7 +2109,7 @@ static void SV_ConnectionlessPacket (void)
 	if (sv_format_string_hack->intvalue == 2)
 	{
 		char	*p = s;
-		while ((p = strchr (p, '%')))
+		while ((p = strchr (p, '%')) != NULL)
 			p[0] = ' ';
 	}
 
@@ -3043,7 +3043,7 @@ qboolean SV_UserInfoBanned (client_t *cl)
 	const banmatch_t	*match;
 
 	key[0] = 0;
-	while ((match = SV_CheckUserinfoBans (cl->userinfo, key)))
+	while ((match = SV_CheckUserinfoBans (cl->userinfo, key)) != NULL)
 	{
 		switch (match->blockmethod)
 		{
@@ -3127,7 +3127,7 @@ void SV_UserinfoChanged (client_t *cl)
 	if (sv_format_string_hack->intvalue)
 	{
 		char	*p = cl->userinfo;
-		while ((p = strchr (p, '%')))
+		while ((p = strchr (p, '%')) != NULL)
 			p[0] = ' ';
 	}
 

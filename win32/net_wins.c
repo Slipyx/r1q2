@@ -157,7 +157,7 @@ int NET_SendPacket (netsrc_t sock, int length, const void *data, netadr_t *to)
 //	char *z;
 	int					ret;
 	struct sockaddr_in	addr;
-	SOCKET				net_socket;
+	SOCKET				net_socket = 0;
 
 	if (to->type == NA_IP)
 	{

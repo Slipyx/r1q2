@@ -222,7 +222,7 @@ DWORD CALLBACK RequestProc(LPVOID lpParameter)
 
 	//_endthreadex (0);
 	ExitThread (0);
-	return 0;
+	//return 0; // [JoshK] Warning C4702: Unreachable code
 }
 
 

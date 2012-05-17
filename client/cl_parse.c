@@ -143,14 +143,14 @@ qboolean	CL_CheckOrDownloadFile (const char *filename)
 
 		//r1: fix \ to /
 		p = cls.downloadname;
-		while ((p = strchr(p, '\\')))
+		while ((p = strchr(p, '\\')) != NULL)
 			p[0] = '/';
 
 		length = (int)strlen(cls.downloadname);
 
 		//normalize path
 		p = cls.downloadname;
-		while ((p = strstr (p, "./")))
+		while ((p = strstr (p, "./")) != NULL)
 		{
 			memmove (p, p+2, length - (p - cls.downloadname) - 1);
 			length -= 2;

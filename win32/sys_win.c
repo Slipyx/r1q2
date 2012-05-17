@@ -1501,7 +1501,7 @@ BOOL CALLBACK EnumerateLoadedModulesProcDump (PSTR ModuleName, DWORD64 ModuleBas
 
 	if (fnGetFileVersionInfo && fnVerQueryValue && fnGetFileVersionInfoSize)
 	{
-		if (len = (fnGetFileVersionInfoSize (ModuleName, &dummy)))
+		if ((len = (fnGetFileVersionInfoSize (ModuleName, &dummy))) != 0 )
 		{
 			verInfo = LocalAlloc (LPTR, len);
 			if (fnGetFileVersionInfo (ModuleName, dummy, len, verInfo))
@@ -2564,5 +2564,5 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		return 1;
 	}
 
-	return 0;
+	//return 0; // [JoshK] Warning C4702: Unreachable code
 }

@@ -284,9 +284,9 @@ static void RB_Purge (const struct rbtree *r)
 	void *data;
 	void *ptr;
 
-	if ((rblist=rbopenlist(rb)))
+	if ((rblist=rbopenlist(rb)) != NULL)
 	{
-		while((val=rbreadlist(rblist)))
+		while((val=rbreadlist(rblist)) != NULL)
 		{
 			data = rbfind (val, rb);
 			ptr = *(void **)data;
@@ -1164,7 +1164,7 @@ static void FS_LoadPaks (const char *dir, const char *ext)
 	total = 0;
 	totalpaks = 0;
 
-	if ((s = Sys_FindFirst (pakfile, 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM)))
+	if ((s = Sys_FindFirst (pakfile, 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM)) != NULL)
 	{
 		while (s)
 		{

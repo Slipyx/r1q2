@@ -1304,7 +1304,7 @@ static void SV_BeginDownload_f(void)
 
 	//fix some ./ references in maps, eg ./textures/map/file
 	p = name;
-	while ((p = strstr (p, "./")))
+	while ((p = strstr (p, "./")) != NULL)
 	{
 		memmove (p, p+2, length - (p - name) - 1);
 		length -= 2;
@@ -2305,7 +2305,7 @@ static void SV_ExecuteUserCommand (char *s)
 	if (sv_format_string_hack->intvalue)
 	{
 		char	*p = s;
-		while ((p = strchr (p, '%')))
+		while ((p = strchr (p, '%')) != NULL)
 			p[0] = ' ';
 	}
 
@@ -2591,7 +2591,7 @@ void SV_RunMultiMoves (client_t *cl)
 	int			lastframe;
 
 	usercmd_t	last;
-	usercmd_t	move;
+    usercmd_t	move = {0,0,{0,0,0},0,0,0,0,0};
 	usercmd_t	*oldcmd;
 
 	bits = MSG_ReadByte (&net_message);

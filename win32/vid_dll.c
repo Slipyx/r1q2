@@ -462,7 +462,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_QUIT:
 	case WM_CLOSE:
 		CL_Quit_f();
-		return 0;
+		//return 0; // [JoshK] Warning C4702: Unreachable code
 
 	case WM_DESTROY:
 		// let sound and input know about this?
