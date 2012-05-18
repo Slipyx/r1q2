@@ -835,7 +835,7 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 				(int)(cl->flood_locktill - level.time));
             return;
         }
-        i = cl->flood_whenhead - flood_msgs->value + 1;
+        i = (int)(cl->flood_whenhead - flood_msgs->value + 1);
         if (i < 0)
             i = (sizeof(cl->flood_when)/sizeof(cl->flood_when[0])) + i;
 		if (cl->flood_when[i] && 

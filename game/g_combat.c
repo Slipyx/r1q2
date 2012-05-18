@@ -280,9 +280,9 @@ static int CheckArmor (edict_t *ent, vec3_t point, vec3_t normal, int damage, in
 	armor = GetItemByIndex (index);
 
 	if (dflags & DAMAGE_ENERGY)
-		save = (float)ceil(((gitem_armor_t *)armor->info)->energy_protection*damage);
+		save = (int)ceil(((gitem_armor_t *)armor->info)->energy_protection*damage);
 	else
-		save = (float)ceil(((gitem_armor_t *)armor->info)->normal_protection*damage);
+		save = (int)ceil(((gitem_armor_t *)armor->info)->normal_protection*damage);
 	if (save >= client->pers.inventory[index])
 		save = client->pers.inventory[index];
 
@@ -407,7 +407,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	// easy mode takes half damage
 	if (skill->value == 0 && deathmatch->value == 0 && targ->client)
 	{
-		damage *= 0.5f;
+		damage >>= 1; // [JoshK] Alternative to integer halving
 		if (!damage)
 			damage = 1;
 	}
@@ -423,7 +423,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 
 // bonus damage for suprising a monster
 	if (!(dflags & DAMAGE_RADIUS) && (targ->svflags & SVF_MONSTER) && (attacker->client) && (!targ->enemy) && (targ->health > 0))
-		damage *= 2;
+		damage <<= 1; // [JoshK] Alternative to integer doubling
 
 	if (targ->flags & FL_NO_KNOCKBACK)
 		knockback = 0;
@@ -439,7 +439,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 			if (targ->mass < 50)
 				mass = 50;
 			else
-				mass = targ->mass;
+				mass = (float)targ->mass;
 
 			if (targ->client  && attacker == targ)
 				VectorScale (dir, 1600.0f * (float)knockback / mass, kvel);	// the rocket jump hack...
@@ -511,7 +511,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 		M_ReactToDamage (targ, attacker);
 		if (!(targ->monsterinfo.aiflags & AI_DUCKED) && (take))
 		{
-			targ->pain (targ, attacker, knockback, take);
+			targ->pain (targ, attacker, (float)knockback, take);
 			// nightmare mode monsters don't go into pain frames often
 			if (skill->value == 3)
 				targ->pain_debounce_time = level.time + 5;
@@ -520,12 +520,12 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	else if (client)
 	{
 		if (!(targ->flags & FL_GODMODE) && (take))
-			targ->pain (targ, attacker, knockback, take);
+			targ->pain (targ, attacker, (float)knockback, take);
 	}
 	else if (take)
 	{
 		if (targ->pain)
-			targ->pain (targ, attacker, knockback, take);
+			targ->pain (targ, attacker, (float)knockback, take);
 	}
 
 	// add to the damage inflicted on a player this frame

@@ -144,7 +144,7 @@ void ChasePrev(edict_t *ent)
 	do {
 		i--;
 		if (i < 1)
-			i = maxclients->value;
+			i = (int)maxclients->value;
 		e = g_edicts + i;
 		if (!e->inuse)
 			continue;
