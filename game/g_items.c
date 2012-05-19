@@ -36,9 +36,9 @@ void Weapon_GrenadeLauncher (edict_t *ent);
 void Weapon_Railgun (edict_t *ent);
 void Weapon_BFG (edict_t *ent);
 
-gitem_armor_t jacketarmor_info	= { 25,  50, .30, .00, ARMOR_JACKET};
-gitem_armor_t combatarmor_info	= { 50, 100, .60, .30, ARMOR_COMBAT};
-gitem_armor_t bodyarmor_info	= {100, 200, .80, .60, ARMOR_BODY};
+gitem_armor_t jacketarmor_info	= { 25,  50, .30f, .00f, ARMOR_JACKET};
+gitem_armor_t combatarmor_info	= { 50, 100, .60f, .30f, ARMOR_COMBAT};
+gitem_armor_t bodyarmor_info	= {100, 200, .80f, .60f, ARMOR_BODY};
 
 int	jacket_armor_index;
 int	combat_armor_index;
@@ -172,11 +172,11 @@ qboolean Pickup_Powerup (edict_t *ent, edict_t *other)
 	if (deathmatch->value)
 	{
 		if (!(ent->spawnflags & DROPPED_ITEM) )
-			SetRespawn (ent, ent->item->quantity);
+			SetRespawn (ent, (float)ent->item->quantity);
 		if (((int)dmflags->value & DF_INSTANT_ITEMS) || ((ent->item->use == Use_Quad) && (ent->spawnflags & DROPPED_PLAYER_ITEM)))
 		{
 			if ((ent->item->use == Use_Quad) && (ent->spawnflags & DROPPED_PLAYER_ITEM))
-				quad_drop_timeout_hack = (ent->nextthink - level.time) / FRAMETIME;
+				quad_drop_timeout_hack = (int)((ent->nextthink - level.time) / FRAMETIME);
 			ent->item->use (other, ent->item);
 		}
 	}
@@ -203,7 +203,7 @@ qboolean Pickup_Adrenaline (edict_t *ent, edict_t *other)
 		other->health = other->max_health;
 
 	if (!(ent->spawnflags & DROPPED_ITEM) && (deathmatch->value))
-		SetRespawn (ent, ent->item->quantity);
+		SetRespawn (ent, (float)ent->item->quantity);
 
 	return true;
 }
@@ -213,7 +213,7 @@ qboolean Pickup_AncientHead (edict_t *ent, edict_t *other)
 	other->max_health += 2;
 
 	if (!(ent->spawnflags & DROPPED_ITEM) && (deathmatch->value))
-		SetRespawn (ent, ent->item->quantity);
+		SetRespawn (ent, (float)ent->item->quantity);
 
 	return true;
 }
@@ -251,7 +251,7 @@ qboolean Pickup_Bandolier (edict_t *ent, edict_t *other)
 	}
 
 	if (!(ent->spawnflags & DROPPED_ITEM) && (deathmatch->value))
-		SetRespawn (ent, ent->item->quantity);
+		SetRespawn (ent, (float)ent->item->quantity);
 
 	return true;
 }
@@ -329,7 +329,7 @@ qboolean Pickup_Pack (edict_t *ent, edict_t *other)
 	}
 
 	if (!(ent->spawnflags & DROPPED_ITEM) && (deathmatch->value))
-		SetRespawn (ent, ent->item->quantity);
+		SetRespawn (ent, (float)ent->item->quantity);
 
 	return true;
 }
@@ -356,7 +356,7 @@ void Use_Quad (edict_t *ent, gitem_t *item)
 	if (ent->client->quad_framenum > level.framenum)
 		ent->client->quad_framenum += timeout;
 	else
-		ent->client->quad_framenum = level.framenum + timeout;
+		ent->client->quad_framenum = (float)(level.framenum + timeout);
 
 	gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage.wav"), 1, ATTN_NORM, 0);
 }
@@ -371,7 +371,7 @@ void Use_Breather (edict_t *ent, gitem_t *item)
 	if (ent->client->breather_framenum > level.framenum)
 		ent->client->breather_framenum += 300;
 	else
-		ent->client->breather_framenum = level.framenum + 300;
+		ent->client->breather_framenum = (float)(level.framenum + 300);
 
 //	gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage.wav"), 1, ATTN_NORM, 0);
 }
@@ -386,7 +386,7 @@ void Use_Envirosuit (edict_t *ent, gitem_t *item)
 	if (ent->client->enviro_framenum > level.framenum)
 		ent->client->enviro_framenum += 300;
 	else
-		ent->client->enviro_framenum = level.framenum + 300;
+		ent->client->enviro_framenum = (float)(level.framenum + 300);
 
 //	gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage.wav"), 1, ATTN_NORM, 0);
 }
@@ -401,7 +401,7 @@ void	Use_Invulnerability (edict_t *ent, gitem_t *item)
 	if (ent->client->invincible_framenum > level.framenum)
 		ent->client->invincible_framenum += 300;
 	else
-		ent->client->invincible_framenum = level.framenum + 300;
+		ent->client->invincible_framenum = (float)(level.framenum + 300);
 
 	gi.sound(ent, CHAN_ITEM, gi.soundindex("items/protect.wav"), 1, ATTN_NORM, 0);
 }
@@ -648,7 +648,7 @@ qboolean Pickup_Armor (edict_t *ent, edict_t *other)
 		{
 			// calc new armor values
 			salvage = oldinfo->normal_protection / newinfo->normal_protection;
-			salvagecount = salvage * other->client->pers.inventory[old_armor_index];
+			salvagecount = (int)(salvage * other->client->pers.inventory[old_armor_index]);
 			newcount = newinfo->base_count + salvagecount;
 			if (newcount > newinfo->max_count)
 				newcount = newinfo->max_count;
@@ -663,7 +663,7 @@ qboolean Pickup_Armor (edict_t *ent, edict_t *other)
 		{
 			// calc new armor values
 			salvage = newinfo->normal_protection / oldinfo->normal_protection;
-			salvagecount = salvage * newinfo->base_count;
+			salvagecount = (int)(salvage * newinfo->base_count);
 			newcount = other->client->pers.inventory[old_armor_index] + salvagecount;
 			if (newcount > oldinfo->max_count)
 				newcount = oldinfo->max_count;
@@ -735,7 +735,7 @@ qboolean Pickup_PowerArmor (edict_t *ent, edict_t *other)
 	if (deathmatch->value)
 	{
 		if (!(ent->spawnflags & DROPPED_ITEM) )
-			SetRespawn (ent, ent->item->quantity);
+			SetRespawn (ent, (float)ent->item->quantity);
 		// auto-use for DM only if we didn't already have one
 		if (!quantity)
 			ent->item->use (other, ent->item);
@@ -779,7 +779,7 @@ void Touch_Item (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf
 		// show icon and name on status bar
 		other->client->ps.stats[STAT_PICKUP_ICON] = gi.imageindex(ent->item->icon);
 		other->client->ps.stats[STAT_PICKUP_STRING] = CS_ITEMS+ITEM_INDEX(ent->item);
-		other->client->pickup_msg_time = level.time + 3.0;
+		other->client->pickup_msg_time = level.time + 3.0f;
 
 		// change selected item
 		if (ent->item->use)

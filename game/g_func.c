@@ -103,7 +103,7 @@ void Move_Begin (edict_t *ent)
 		return;
 	}
 	VectorScale (ent->moveinfo.dir, ent->moveinfo.speed, ent->velocity);
-	frames = floor((ent->moveinfo.remaining_distance / ent->moveinfo.speed) / FRAMETIME);
+	frames = (float)floor((ent->moveinfo.remaining_distance / ent->moveinfo.speed) / FRAMETIME);
 	ent->moveinfo.remaining_distance -= frames * ent->moveinfo.speed * FRAMETIME;
 	ent->nextthink = level.time + (frames * FRAMETIME);
 	ent->think = Move_Final;
@@ -196,7 +196,7 @@ void AngleMove_Begin (edict_t *ent)
 		return;
 	}
 
-	frames = floor(traveltime / FRAMETIME);
+	frames = (float)floor(traveltime / FRAMETIME);
 
 	// scale the destdelta vector by the time spent traveling to get velocity
 	VectorScale (destdelta, 1.0f / traveltime, ent->avelocity);
@@ -253,7 +253,7 @@ void plat_CalcAcceleratedMove(moveinfo_t *moveinfo)
 		float	f;
 
 		f = (moveinfo->accel + moveinfo->decel) / (moveinfo->accel * moveinfo->decel);
-		moveinfo->move_speed = (-2 + sqrt(4 - 4 * f * (-2 * moveinfo->remaining_distance))) / (2 * f);
+		moveinfo->move_speed = (-2 + (float)sqrt(4 - 4 * f * (-2 * moveinfo->remaining_distance))) / (2 * f);
 		decel_dist = AccelerationDistance (moveinfo->move_speed, moveinfo->decel);
 	}
 
@@ -1129,7 +1129,7 @@ void door_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *sur
 
 	if (level.time < self->touch_debounce_time)
 		return;
-	self->touch_debounce_time = level.time + 5.0;
+	self->touch_debounce_time = level.time + 5.0f;
 
 	gi.centerprintf (other, "%s", self->message);
 	gi.sound (other, CHAN_AUTO, gi.soundindex ("misc/talk1.wav"), 1, ATTN_NORM, 0);
@@ -1283,7 +1283,7 @@ void SP_func_door_rotating (edict_t *ent)
 
 	VectorCopy (ent->s.angles, ent->pos1);
 	VectorMA (ent->s.angles, st.distance, ent->movedir, ent->pos2);
-	ent->moveinfo.distance = st.distance;
+	ent->moveinfo.distance = (float)st.distance;
 
 	ent->movetype = MOVETYPE_PUSH;
 	ent->solid = SOLID_BSP;
@@ -1831,7 +1831,7 @@ void func_conveyor_use (edict_t *self, edict_t *other, edict_t *activator)
 	}
 	else
 	{
-		self->speed = self->count;
+		self->speed = (float)self->count;
 		self->spawnflags |= 1;
 	}
 
@@ -1846,7 +1846,7 @@ void SP_func_conveyor (edict_t *self)
 
 	if (!(self->spawnflags & 1))
 	{
-		self->count = self->speed;
+		self->count = (int)self->speed;
 		self->speed = 0;
 	}
 
