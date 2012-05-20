@@ -233,7 +233,7 @@ void target_explosion_explode (edict_t *self)
 	gi.WritePosition (self->s.origin);
 	gi.multicast (self->s.origin, MULTICAST_PHS);
 
-	T_RadiusDamage (self, self->activator, self->dmg, NULL, self->dmg+40, MOD_EXPLOSIVE);
+	T_RadiusDamage (self, self->activator, (float)self->dmg, NULL, (float)(self->dmg+40), MOD_EXPLOSIVE);
 
 	save = self->delay;
 	self->delay = 0;
@@ -346,7 +346,7 @@ void use_target_splash (edict_t *self, edict_t *other, edict_t *activator)
 	gi.multicast (self->s.origin, MULTICAST_PVS);
 
 	if (self->dmg)
-		T_RadiusDamage (self, activator, self->dmg, NULL, self->dmg+40, MOD_SPLASH);
+		T_RadiusDamage (self, activator, (float)self->dmg, NULL, (float)(self->dmg+40), MOD_SPLASH);
 }
 
 void SP_target_splash (edict_t *self)
@@ -424,7 +424,7 @@ void use_target_blaster (edict_t *self, edict_t *other, edict_t *activator)
 	else
 		effect = EF_BLASTER;
 
-	fire_blaster (self, self->s.origin, self->movedir, self->dmg, self->speed, EF_BLASTER, MOD_TARGET_BLASTER);
+	fire_blaster (self, self->s.origin, self->movedir, self->dmg, (int)self->speed, EF_BLASTER, MOD_TARGET_BLASTER);
 	gi.sound (self, CHAN_VOICE, self->noise_index, 1, ATTN_NORM, 0);
 }
 
@@ -657,7 +657,7 @@ void target_lightramp_think (edict_t *self)
 {
 	char	style[2];
 
-	style[0] = 'a' + self->movedir[0] + (level.time - self->timestamp) / FRAMETIME * self->movedir[2];
+	style[0] = (char)('a' + self->movedir[0] + (level.time - self->timestamp) / FRAMETIME * self->movedir[2]);
 	style[1] = 0;
 	gi.configstring (CS_LIGHTS+self->enemy->style, style);
 
@@ -669,7 +669,7 @@ void target_lightramp_think (edict_t *self)
 	{
 		char	temp;
 
-		temp = self->movedir[0];
+		temp = (char)self->movedir[0];
 		self->movedir[0] = self->movedir[1];
 		self->movedir[1] = temp;
 		self->movedir[2] *= -1;
@@ -738,8 +738,8 @@ void SP_target_lightramp (edict_t *self)
 	self->use = target_lightramp_use;
 	self->think = target_lightramp_think;
 
-	self->movedir[0] = self->message[0] - 'a';
-	self->movedir[1] = self->message[1] - 'a';
+	self->movedir[0] = (vec_t)(self->message[0] - 'a');
+	self->movedir[1] = (vec_t)(self->message[1] - 'a');
 	self->movedir[2] = (self->movedir[1] - self->movedir[0]) / (self->speed / FRAMETIME);
 }
 

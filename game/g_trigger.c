@@ -223,7 +223,7 @@ void trigger_key_use (edict_t *self, edict_t *other, edict_t *activator)
 	{
 		if (level.time < self->touch_debounce_time)
 			return;
-		self->touch_debounce_time = level.time + 5.0;
+		self->touch_debounce_time = level.time + 5.0f;
 		gi.centerprintf (activator, "You need the %s", self->item->pickup_name);
 		gi.sound (activator, CHAN_AUTO, gi.soundindex ("misc/keytry.wav"), 1, ATTN_NORM, 0);
 		return;
@@ -407,7 +407,7 @@ void trigger_push_touch (edict_t *self, edict_t *other, cplane_t *plane, csurfac
 			VectorCopy (other->velocity, other->client->oldvelocity);
 			if (other->fly_sound_debounce_time < level.time)
 			{
-				other->fly_sound_debounce_time = level.time + 1.5;
+				other->fly_sound_debounce_time = level.time + 1.5f;
 				gi.sound (other, CHAN_AUTO, windsound, 1, ATTN_NORM, 0);
 			}
 		}
@@ -544,7 +544,7 @@ void SP_trigger_gravity (edict_t *self)
 	}
 
 	InitTrigger (self);
-	self->gravity = atoi(st.gravity);
+	self->gravity = (float)atoi(st.gravity);
 	self->touch = trigger_gravity_touch;
 }
 
@@ -593,6 +593,6 @@ void SP_trigger_monsterjump (edict_t *self)
 		self->s.angles[YAW] = 360;
 	InitTrigger (self);
 	self->touch = trigger_monsterjump_touch;
-	self->movedir[2] = st.height;
+	self->movedir[2] = (vec_t)st.height;
 }
 

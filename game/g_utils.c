@@ -91,7 +91,7 @@ edict_t *findradius (edict_t *from, vec3_t org, float rad)
 		if (from->solid == SOLID_NOT)
 			continue;
 		for (j=0 ; j<3 ; j++)
-			eorg[j] = org[j] - (from->s.origin[j] + (from->mins[j] + from->maxs[j])*0.5);
+			eorg[j] = org[j] - (from->s.origin[j] + (from->mins[j] + from->maxs[j])*0.5f);
 		if (VectorLength(eorg) > rad)
 			continue;
 		return from;
@@ -344,7 +344,7 @@ float vectoyaw (vec3_t vec)
 	} 
 	else
 	{
-		yaw = (int) (atan2(vec[YAW], vec[PITCH]) * 180 / M_PI);
+		yaw = (float)(int)(atan2(vec[YAW], vec[PITCH]) * 180 / M_PI);
 		if (yaw < 0)
 			yaw += 360;
 	}
@@ -369,7 +369,7 @@ void vectoangles (vec3_t value1, vec3_t angles)
 	else
 	{
 		if (value1[0])
-			yaw = (int) (atan2(value1[1], value1[0]) * 180 / M_PI);
+			yaw = (float)(int)(atan2(value1[1], value1[0]) * 180 / M_PI);
 		else if (value1[1] > 0)
 			yaw = 90;
 		else
@@ -377,8 +377,8 @@ void vectoangles (vec3_t value1, vec3_t angles)
 		if (yaw < 0)
 			yaw += 360;
 
-		forward = sqrt (value1[0]*value1[0] + value1[1]*value1[1]);
-		pitch = (int) (atan2(value1[2], forward) * 180 / M_PI);
+		forward = (float)sqrt(value1[0]*value1[0] + value1[1]*value1[1]);
+		pitch = (float)(int)(atan2(value1[2], forward) * 180 / M_PI);
 		if (pitch < 0)
 			pitch += 360;
 	}
@@ -423,7 +423,7 @@ edict_t *G_Spawn (void)
 	edict_t		*e;
 
 	e = &g_edicts[(int)maxclients->value+1];
-	for ( i=maxclients->value+1 ; i<globals.num_edicts ; i++, e++)
+	for ( i=(int)(maxclients->value+1) ; i<globals.num_edicts ; i++, e++)
 	{
 		// the first couple seconds of server time can involve a lot of
 		// freeing and allocating, so relax the replacement policy

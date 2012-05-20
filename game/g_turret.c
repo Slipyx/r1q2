@@ -41,7 +41,7 @@ float SnapToEights(float x)
 		x += 0.5f;
 	else
 		x -= 0.5f;
-	return 0.125 * (int)x;
+	return 0.125f * (int)x;
 }
 
 
@@ -87,8 +87,8 @@ void turret_breach_fire (edict_t *self)
 	VectorMA (start, self->move_origin[1], r, start);
 	VectorMA (start, self->move_origin[2], u, start);
 
-	damage = 100 + random() * 50;
-	speed = 550 + 50 * skill->value;
+	damage = (int)(100 + random() * 50);
+	speed = 550 + (int)(50 * skill->value);
 	fire_rocket (self->teammaster->owner, start, f, damage, speed, 150, damage);
 	gi.positioned_sound (start, self, CHAN_WEAPON, gi.soundindex("weapons/rocklf1a.wav"), 1, ATTN_NORM, 0);
 }
@@ -175,8 +175,8 @@ void turret_breach_think (edict_t *self)
 		// x & y
 		angle = self->s.angles[1] + self->owner->move_origin[1];
 		angle *= (M_PI*2 / 360);
-		target[0] = SnapToEights(self->s.origin[0] + cos(angle) * self->owner->move_origin[0]);
-		target[1] = SnapToEights(self->s.origin[1] + sin(angle) * self->owner->move_origin[0]);
+		target[0] = SnapToEights(self->s.origin[0] + (float)cos(angle) * self->owner->move_origin[0]);
+		target[1] = SnapToEights(self->s.origin[1] + (float)sin(angle) * self->owner->move_origin[0]);
 		target[2] = self->owner->s.origin[2];
 
 		VectorSubtract (target, self->owner->s.origin, dir);
@@ -185,7 +185,7 @@ void turret_breach_think (edict_t *self)
 
 		// z
 		angle = self->s.angles[PITCH] * (M_PI*2 / 360);
-		target_z = SnapToEights(self->s.origin[2] + self->owner->move_origin[0] * tan(angle) + self->owner->move_origin[2]);
+		target_z = SnapToEights(self->s.origin[2] + self->owner->move_origin[0] * (float)tan(angle) + self->owner->move_origin[2]);
 
 		diff = target_z - self->owner->s.origin[2];
 		self->owner->velocity[2] = diff * 1.0f / FRAMETIME;

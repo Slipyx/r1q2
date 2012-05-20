@@ -208,13 +208,13 @@ void InitGame (void)
 	game.helpmessage1[0] = game.helpmessage2[0] = 0;
 
 	// initialize all entities for this game
-	game.maxentities = maxentities->value;
+	game.maxentities = (int)maxentities->value;
 	g_edicts =  gi.TagMalloc (game.maxentities * sizeof(g_edicts[0]), TAG_GAME);
 	globals.edicts = g_edicts;
 	globals.max_edicts = game.maxentities;
 
 	// initialize all clients for this game
-	game.maxclients = maxclients->value;
+	game.maxclients = (int)maxclients->value;
 	game.clients = gi.TagMalloc (game.maxclients * sizeof(game.clients[0]), TAG_GAME);
 	globals.num_edicts = game.maxclients+1;
 }
@@ -697,7 +697,7 @@ void ReadLevel (const char *filename)
 
 	// wipe all the entities
 	memset (g_edicts, 0, game.maxentities*sizeof(g_edicts[0]));
-	globals.num_edicts = maxclients->value+1;
+	globals.num_edicts = (int)(maxclients->value+1);
 
 	// check edict size
 	fread (&i, sizeof(i), 1, f);
