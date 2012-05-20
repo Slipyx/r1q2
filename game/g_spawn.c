@@ -386,10 +386,10 @@ void ED_ParseField (const char *key, const char *value, edict_t *ent)
 				*(int *)(b+f->ofs) = atoi(value);
 				break;
 			case F_FLOAT:
-				*(float *)(b+f->ofs) = atof(value);
+				*(float *)(b+f->ofs) = (float)atof(value);
 				break;
 			case F_ANGLEHACK:
-				v = atof(value);
+				v = (float)atof(value);
 				((float *)(b+f->ofs))[0] = 0;
 				((float *)(b+f->ofs))[1] = v;
 				((float *)(b+f->ofs))[2] = 0;
@@ -413,7 +413,7 @@ Parses an edict out of the given string, returning the new position
 ed should be a properly initialized empty edict.
 ====================
 */
-char *ED_ParseEdict (char *data, edict_t *ent)
+static const char *ED_ParseEdict (const char *data, edict_t *ent)
 {
 	qboolean	init;
 	char		keyname[256];
@@ -527,7 +527,7 @@ void SpawnEntities (const char *mapname, const char *entities, const char *spawn
 	int			i;
 	float		skill_level;
 
-	skill_level = floor (skill->value);
+	skill_level = (float)floor (skill->value);
 	if (skill_level < 0)
 		skill_level = 0;
 	if (skill_level > 3)
