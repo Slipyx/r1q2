@@ -479,7 +479,7 @@ void LookAtKiller (edict_t *self, edict_t *inflictor, edict_t *attacker)
 	}
 
 	if (dir[0])
-		self->client->killer_yaw = 180/M_PI*atan2(dir[1], dir[0]);
+		self->client->killer_yaw = 180/M_PI*(float)atan2(dir[1], dir[0]);
 	else {
 		self->client->killer_yaw = 0;
 		if (dir[1] > 0)
@@ -1187,9 +1187,9 @@ void PutClientInServer (edict_t *ent)
 	// clear playerstate values
 	memset (&ent->client->ps, 0, sizeof(client->ps));
 
-	client->ps.pmove.origin[0] = spawn_origin[0]*8;
-	client->ps.pmove.origin[1] = spawn_origin[1]*8;
-	client->ps.pmove.origin[2] = spawn_origin[2]*8;
+	client->ps.pmove.origin[0] = (int16)(spawn_origin[0]*8);
+	client->ps.pmove.origin[1] = (int16)(spawn_origin[1]*8);
+	client->ps.pmove.origin[2] = (int16)(spawn_origin[2]*8);
 
 	if (deathmatch->value && ((int)dmflags->value & DF_FIXED_FOV))
 	{
@@ -1197,7 +1197,7 @@ void PutClientInServer (edict_t *ent)
 	}
 	else
 	{
-		client->ps.fov = atoi(Info_ValueForKey(client->pers.userinfo, "fov"));
+		client->ps.fov = (float)atoi(Info_ValueForKey(client->pers.userinfo, "fov"));
 		if (client->ps.fov < 1)
 			client->ps.fov = 90;
 		else if (client->ps.fov > 160)
@@ -1397,7 +1397,7 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 	}
 	else
 	{
-		ent->client->ps.fov = atoi(Info_ValueForKey(userinfo, "fov"));
+		ent->client->ps.fov = (float)atoi(Info_ValueForKey(userinfo, "fov"));
 		if (ent->client->ps.fov < 1)
 			ent->client->ps.fov = 90;
 		else if (ent->client->ps.fov > 160)
@@ -1609,13 +1609,13 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		else
 			client->ps.pmove.pm_type = PM_NORMAL;
 
-		client->ps.pmove.gravity = sv_gravity->value;
+		client->ps.pmove.gravity = (int16)sv_gravity->value;
 		pm.s = client->ps.pmove;
 
 		for (i=0 ; i<3 ; i++)
 		{
-			pm.s.origin[i] = ent->s.origin[i]*8;
-			pm.s.velocity[i] = ent->velocity[i]*8;
+			pm.s.origin[i] = (int16)(ent->s.origin[i]*8);
+			pm.s.velocity[i] = (int16)(ent->velocity[i]*8);
 		}
 
 		if (memcmp(&client->old_pmove, &pm.s, sizeof(pm.s)))
@@ -1638,8 +1638,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 		for (i=0 ; i<3 ; i++)
 		{
-			ent->s.origin[i] = pm.s.origin[i]*0.125;
-			ent->velocity[i] = pm.s.velocity[i]*0.125;
+			ent->s.origin[i] = pm.s.origin[i]*0.125f;
+			ent->velocity[i] = pm.s.velocity[i]*0.125f;
 		}
 
 		VectorCopy (pm.mins, ent->mins);
@@ -1655,7 +1655,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			PlayerNoise(ent, ent->s.origin, PNOISE_SELF);
 		}
 
-		ent->viewheight = pm.viewheight;
+		ent->viewheight = (int)pm.viewheight;
 		ent->waterlevel = pm.waterlevel;
 		ent->watertype = pm.watertype;
 		ent->groundentity = pm.groundentity;

@@ -68,8 +68,8 @@ realcheck:
 	start[2] = mins[2];
 	
 // the midpoint must be within 16 of the bottom
-	start[0] = stop[0] = (mins[0] + maxs[0])*0.5;
-	start[1] = stop[1] = (mins[1] + maxs[1])*0.5;
+	start[0] = stop[0] = (mins[0] + maxs[0])*0.5f;
+	start[1] = stop[1] = (mins[1] + maxs[1])*0.5f;
 	stop[2] = start[2] - 2*STEPSIZE;
 	trace = gi.trace (start, vec3_origin, vec3_origin, stop, ent, MASK_MONSTERSOLID);
 
@@ -359,8 +359,8 @@ qboolean SV_StepDirection (edict_t *ent, float yaw, float dist)
 	M_ChangeYaw (ent);
 	
 	yaw = yaw*M_PI*2 / 360;
-	move[0] = cos(yaw)*dist;
-	move[1] = sin(yaw)*dist;
+	move[0] = (float)cos(yaw)*dist;
+	move[1] = (float)sin(yaw)*dist;
 	move[2] = 0;
 
 	VectorCopy (ent->s.origin, oldorigin);
@@ -410,7 +410,7 @@ void SV_NewChaseDir (edict_t *actor, edict_t *enemy, float dist)
 	if (!enemy)
 		return;
 
-	olddir = anglemod( (int)(actor->ideal_yaw/45)*45 );
+	olddir = anglemod( (float)((int)(actor->ideal_yaw/45)*45) );
 	turnaround = anglemod(olddir - 180);
 
 	deltax = enemy->s.origin[0] - actor->s.origin[0];
@@ -432,16 +432,16 @@ void SV_NewChaseDir (edict_t *actor, edict_t *enemy, float dist)
 	if (d[1] != DI_NODIR && d[2] != DI_NODIR)
 	{
 		if (d[1] == 0)
-			tdir = d[2] == 90 ? 45 : 315;
+			tdir = d[2] == 90 ? 45.0f : 315.0f;
 		else
-			tdir = d[2] == 90 ? 135 : 215;
+			tdir = d[2] == 90 ? 135.0f : 215.0f;
 			
 		if (tdir != turnaround && SV_StepDirection(actor, tdir, dist))
 			return;
 	}
 
 // try other directions
-	if ( ((rand()&3) & 1) ||  abs(deltay)>abs(deltax))
+	if ( ((rand()&3) & 1) ||  abs((int)deltay)>abs((int)deltax))
 	{
 		tdir=d[1];
 		d[1]=d[2];
@@ -548,8 +548,8 @@ qboolean M_walkmove (edict_t *ent, float yaw, float dist)
 
 	yaw = yaw*M_PI*2 / 360;
 	
-	move[0] = cos(yaw)*dist;
-	move[1] = sin(yaw)*dist;
+	move[0] = (float)cos(yaw)*dist;
+	move[1] = (float)sin(yaw)*dist;
 	move[2] = 0;
 
 	return SV_movestep(ent, move, true);
