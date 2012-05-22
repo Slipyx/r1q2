@@ -602,7 +602,7 @@ void SP_target_actor (edict_t *self)
 		if (self->s.angles[YAW] == 0)
 			self->s.angles[YAW] = 360;
 		G_SetMovedir (self->s.angles, self->movedir);
-		self->movedir[2] = st.height;
+		self->movedir[2] = (vec_t)st.height;
 	}
 
 	gi.linkentity (self);
