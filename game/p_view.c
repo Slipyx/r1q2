@@ -46,7 +46,7 @@ float SV_CalcRoll (vec3_t angles, vec3_t velocity)
 	float	value;
 	
 	side = DotProduct (velocity, right);
-	sign = side < 0 ? -1 : 1;
+	sign = side < 0 ? -1.0f : 1.0f;
 	side = (float)fabs(side);
 	
 	value = sv_rollangle->value;
@@ -89,7 +89,7 @@ void P_DamageFeedback (edict_t *player)
 		client->ps.stats[STAT_FLASHES] |= 2;
 
 	// total points of damage shot at the player this frame
-	count = (client->damage_blood + client->damage_armor + client->damage_parmor);
+	count = (float)(client->damage_blood + client->damage_armor + client->damage_parmor);
 	if (count == 0)
 		return;		// didn't take any damage
 
@@ -133,7 +133,7 @@ void P_DamageFeedback (edict_t *player)
 	if ((level.time > player->pain_debounce_time) && !(player->flags & FL_GODMODE) && (client->invincible_framenum <= level.framenum))
 	{
 		r = 1 + (rand()&1);
-		player->pain_debounce_time = level.time + 0.7;
+		player->pain_debounce_time = level.time + 0.7f;
 		if (player->health < 25)
 			l = 25;
 		else if (player->health < 50)
@@ -148,11 +148,11 @@ void P_DamageFeedback (edict_t *player)
 	// the total alpha of the blend is always proportional to count
 	if (client->damage_alpha < 0)
 		client->damage_alpha = 0;
-	client->damage_alpha += count*0.01;
+	client->damage_alpha += count*0.01f;
 	if (client->damage_alpha < 0.2)
 		client->damage_alpha = 0.2f;
 	if (client->damage_alpha > 0.6)
-		client->damage_alpha = 0.6;		// don't go too saturated
+		client->damage_alpha = 0.6f;		// don't go too saturated
 
 	// the color of the blend will vary based on how much was absorbed
 	// by different armors
@@ -169,7 +169,7 @@ void P_DamageFeedback (edict_t *player)
 	//
 	// calculate view angle kicks
 	//
-	kick = abs(client->damage_knockback);
+	kick = (float)abs(client->damage_knockback);
 	if (kick && player->health > 0)	// kick of 0 means no view adjust at all
 	{
 		kick = kick * 100 / player->health;
@@ -183,10 +183,10 @@ void P_DamageFeedback (edict_t *player)
 		VectorNormalize (v);
 		
 		side = DotProduct (v, right);
-		client->v_dmg_roll = kick*side*0.3;
+		client->v_dmg_roll = kick*side*0.3f;
 		
 		side = -DotProduct (v, forward);
-		client->v_dmg_pitch = kick*side*0.3;
+		client->v_dmg_pitch = kick*side*0.3f;
 
 		client->v_dmg_time = level.time + DAMAGE_TIME;
 	}
@@ -304,7 +304,7 @@ void SV_CalcViewOffset (edict_t *ent)
 	ratio = (ent->client->fall_time - level.time) / FALL_TIME;
 	if (ratio < 0)
 		ratio = 0;
-	v[2] -= ratio * ent->client->fall_value * 0.4;
+	v[2] -= ratio * ent->client->fall_value * 0.4f;
 
 	// add bob height
 
@@ -348,15 +348,15 @@ void SV_CalcGunOffset (edict_t *ent)
 	float	delta;
 
 	// gun angles from bobbing
-	ent->client->ps.gunangles[ROLL] = xyspeed * bobfracsin * 0.005;
-	ent->client->ps.gunangles[YAW] = xyspeed * bobfracsin * 0.01;
+	ent->client->ps.gunangles[ROLL] = xyspeed * bobfracsin * 0.005f;
+	ent->client->ps.gunangles[YAW] = xyspeed * bobfracsin * 0.01f;
 	if (bobcycle & 1)
 	{
 		ent->client->ps.gunangles[ROLL] = -ent->client->ps.gunangles[ROLL];
 		ent->client->ps.gunangles[YAW] = -ent->client->ps.gunangles[YAW];
 	}
 
-	ent->client->ps.gunangles[PITCH] = xyspeed * bobfracsin * 0.005;
+	ent->client->ps.gunangles[PITCH] = xyspeed * bobfracsin * 0.005f;
 
 	// gun angles from delta movement
 	for (i=0 ; i<3 ; i++)
@@ -371,8 +371,8 @@ void SV_CalcGunOffset (edict_t *ent)
 		if (delta < -45)
 			delta = -45;
 		if (i == YAW)
-			ent->client->ps.gunangles[ROLL] += 0.1*delta;
-		ent->client->ps.gunangles[i] += 0.2 * delta;
+			ent->client->ps.gunangles[ROLL] += 0.1f*delta;
+		ent->client->ps.gunangles[i] += 0.2f * delta;
 	}
 
 	// gun height
@@ -433,44 +433,44 @@ void SV_CalcBlend (edict_t *ent)
 		ent->client->ps.rdflags &= ~RDF_UNDERWATER;
 
 	if (contents & (CONTENTS_SOLID|CONTENTS_LAVA))
-		SV_AddBlend (1.0f, 0.3, 0.0, 0.6, ent->client->ps.blend);
+		SV_AddBlend (1.0f, 0.3f, 0.0f, 0.6f, ent->client->ps.blend);
 	else if (contents & CONTENTS_SLIME)
-		SV_AddBlend (0.0, 0.1f, 0.05, 0.6, ent->client->ps.blend);
+		SV_AddBlend (0.0f, 0.1f, 0.05f, 0.6f, ent->client->ps.blend);
 	else if (contents & CONTENTS_WATER)
-		SV_AddBlend (0.5f, 0.3, 0.2, 0.4, ent->client->ps.blend);
+		SV_AddBlend (0.5f, 0.3f, 0.2f, 0.4f, ent->client->ps.blend);
 
 	// add for powerups
 	if (ent->client->quad_framenum > level.framenum)
 	{
-		remaining = ent->client->quad_framenum - level.framenum;
+		remaining = (int)(ent->client->quad_framenum - level.framenum);
 		if (remaining == 30)	// beginning to fade
 			gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage2.wav"), 1, ATTN_NORM, 0);
 		if (remaining > 30 || (remaining & 4) )
-			SV_AddBlend (0, 0, 1, 0.08, ent->client->ps.blend);
+			SV_AddBlend (0, 0, 1, 0.08f, ent->client->ps.blend);
 	}
 	else if (ent->client->invincible_framenum > level.framenum)
 	{
-		remaining = ent->client->invincible_framenum - level.framenum;
+		remaining = (int)(ent->client->invincible_framenum - level.framenum);
 		if (remaining == 30)	// beginning to fade
 			gi.sound(ent, CHAN_ITEM, gi.soundindex("items/protect2.wav"), 1, ATTN_NORM, 0);
 		if (remaining > 30 || (remaining & 4) )
-			SV_AddBlend (1, 1, 0, 0.08, ent->client->ps.blend);
+			SV_AddBlend (1, 1, 0, 0.08f, ent->client->ps.blend);
 	}
 	else if (ent->client->enviro_framenum > level.framenum)
 	{
-		remaining = ent->client->enviro_framenum - level.framenum;
+		remaining = (int)(ent->client->enviro_framenum - level.framenum);
 		if (remaining == 30)	// beginning to fade
 			gi.sound(ent, CHAN_ITEM, gi.soundindex("items/airout.wav"), 1, ATTN_NORM, 0);
 		if (remaining > 30 || (remaining & 4) )
-			SV_AddBlend (0, 1, 0, 0.08, ent->client->ps.blend);
+			SV_AddBlend (0, 1, 0, 0.08f, ent->client->ps.blend);
 	}
 	else if (ent->client->breather_framenum > level.framenum)
 	{
-		remaining = ent->client->breather_framenum - level.framenum;
+		remaining = (int)(ent->client->breather_framenum - level.framenum);
 		if (remaining == 30)	// beginning to fade
 			gi.sound(ent, CHAN_ITEM, gi.soundindex("items/airout.wav"), 1, ATTN_NORM, 0);
 		if (remaining > 30 || (remaining & 4) )
-			SV_AddBlend (0.4, 1, 0.4, 0.04, ent->client->ps.blend);
+			SV_AddBlend (0.4f, 1, 0.4f, 0.04f, ent->client->ps.blend);
 	}
 
 	// add for damage
@@ -479,10 +479,10 @@ void SV_CalcBlend (edict_t *ent)
 		,ent->client->damage_blend[2], ent->client->damage_alpha, ent->client->ps.blend);
 
 	if (ent->client->bonus_alpha > 0)
-		SV_AddBlend (0.85, 0.7, 0.3, ent->client->bonus_alpha, ent->client->ps.blend);
+		SV_AddBlend (0.85f, 0.7f, 0.3f, ent->client->bonus_alpha, ent->client->ps.blend);
 
 	// drop the damage value
-	ent->client->damage_alpha -= 0.06;
+	ent->client->damage_alpha -= 0.06f;
 	if (ent->client->damage_alpha < 0)
 		ent->client->damage_alpha = 0;
 
@@ -520,7 +520,7 @@ void P_FallingDamage (edict_t *ent)
 			return;
 		delta = ent->velocity[2] - ent->client->oldvelocity[2];
 	}
-	delta = delta*delta * 0.0001;
+	delta = delta*delta * 0.0001f;
 
 	// never take falling damage if completely underwater
 	if (ent->waterlevel == 3)
@@ -554,7 +554,7 @@ void P_FallingDamage (edict_t *ent)
 				ent->s.event = EV_FALL;
 		}
 		ent->pain_debounce_time = level.time;	// no normal pain sound
-		damage = (delta-30)/2;
+		damage = (int)((delta-30)/2);
 		if (damage < 1)
 			damage = 1;
 		VectorSet (dir, 0, 0, 1);
@@ -769,14 +769,14 @@ void G_SetClientEffects (edict_t *ent)
 
 	if (ent->client->quad_framenum > level.framenum)
 	{
-		remaining = ent->client->quad_framenum - level.framenum;
+		remaining = (int)(ent->client->quad_framenum - level.framenum);
 		if (remaining > 30 || (remaining & 4) )
 			ent->s.effects |= EF_QUAD;
 	}
 
 	if (ent->client->invincible_framenum > level.framenum)
 	{
-		remaining = ent->client->invincible_framenum - level.framenum;
+		remaining = (int)(ent->client->invincible_framenum - level.framenum);
 		if (remaining > 30 || (remaining & 4) )
 			ent->s.effects |= EF_PENT;
 	}
@@ -973,8 +973,8 @@ void ClientEndServerFrame (edict_t *ent)
 	//
 	for (i=0 ; i<3 ; i++)
 	{
-		current_client->ps.pmove.origin[i] = ent->s.origin[i]*8.0;
-		current_client->ps.pmove.velocity[i] = ent->velocity[i]*8.0;
+		current_client->ps.pmove.origin[i] = (int16)(ent->s.origin[i]*8.0f);
+		current_client->ps.pmove.velocity[i] = (int16)(ent->velocity[i]*8.0f);
 	}
 
 	//
@@ -1011,7 +1011,7 @@ void ClientEndServerFrame (edict_t *ent)
 	// calculate speed and cycle to be used for
 	// all cyclic walking effects
 	//
-	xyspeed = sqrt(ent->velocity[0]*ent->velocity[0] + ent->velocity[1]*ent->velocity[1]);
+	xyspeed = (float)sqrt(ent->velocity[0]*ent->velocity[0] + ent->velocity[1]*ent->velocity[1]);
 
 	if (xyspeed < 5)
 	{
