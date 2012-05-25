@@ -842,7 +842,7 @@ void soldier_dodge (edict_t *self, edict_t *attacker, float eta)
 		return;
 	}
 
-	self->monsterinfo.pausetime = level.time + eta + 0.3;
+	self->monsterinfo.pausetime = level.time + eta + 0.3f;
 	r = random();
 
 	if (skill->value == 1)

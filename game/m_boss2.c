@@ -592,19 +592,19 @@ qboolean Boss2_CheckAttack (edict_t *self)
 
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 	{
-		chance = 0.4;
+		chance = 0.4f;
 	}
 	else if (enemy_range == RANGE_MELEE)
 	{
-		chance = 0.8;
+		chance = 0.8f;
 	}
 	else if (enemy_range == RANGE_NEAR)
 	{
-		chance = 0.8;
+		chance = 0.8f;
 	}
 	else if (enemy_range == RANGE_MID)
 	{
-		chance = 0.8;
+		chance = 0.8f;
 	}
 	else
 	{

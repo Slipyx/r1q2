@@ -691,7 +691,7 @@ void tank_attack(edict_t *self)
 		else if (r < 0.66)
 		{
 			self->monsterinfo.currentmove = &tank_move_attack_pre_rocket;
-			self->pain_debounce_time = level.time + 5.0;	// no pain for a while
+			self->pain_debounce_time = level.time + 5.0f;	// no pain for a while
 		}
 		else
 			self->monsterinfo.currentmove = &tank_move_attack_blast;

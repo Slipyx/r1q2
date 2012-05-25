@@ -34,9 +34,9 @@ void MoveClientToIntermission (edict_t *ent)
 	if (deathmatch->value || coop->value)
 		ent->client->showscores = true;
 	VectorCopy (level.intermission_origin, ent->s.origin);
-	ent->client->ps.pmove.origin[0] = level.intermission_origin[0]*8;
-	ent->client->ps.pmove.origin[1] = level.intermission_origin[1]*8;
-	ent->client->ps.pmove.origin[2] = level.intermission_origin[2]*8;
+	ent->client->ps.pmove.origin[0] = (int16)(level.intermission_origin[0]*8);
+	ent->client->ps.pmove.origin[1] = (int16)(level.intermission_origin[1]*8);
+	ent->client->ps.pmove.origin[2] = (int16)(level.intermission_origin[2]*8);
 	VectorCopy (level.intermission_angle, ent->client->ps.viewangles);
 	ent->client->ps.pmove.pm_type = PM_FREEZE;
 	ent->client->ps.gunindex = 0;
@@ -451,22 +451,22 @@ void G_SetStats (edict_t *ent)
 	if (ent->client->quad_framenum > level.framenum)
 	{
 		ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex ("p_quad");
-		ent->client->ps.stats[STAT_TIMER] = (ent->client->quad_framenum - level.framenum)/10;
+		ent->client->ps.stats[STAT_TIMER] = (int16)((ent->client->quad_framenum - level.framenum)/10);
 	}
 	else if (ent->client->invincible_framenum > level.framenum)
 	{
 		ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex ("p_invulnerability");
-		ent->client->ps.stats[STAT_TIMER] = (ent->client->invincible_framenum - level.framenum)/10;
+		ent->client->ps.stats[STAT_TIMER] = (int16)((ent->client->invincible_framenum - level.framenum)/10);
 	}
 	else if (ent->client->enviro_framenum > level.framenum)
 	{
 		ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex ("p_envirosuit");
-		ent->client->ps.stats[STAT_TIMER] = (ent->client->enviro_framenum - level.framenum)/10;
+		ent->client->ps.stats[STAT_TIMER] = (int16)((ent->client->enviro_framenum - level.framenum)/10);
 	}
 	else if (ent->client->breather_framenum > level.framenum)
 	{
 		ent->client->ps.stats[STAT_TIMER_ICON] = gi.imageindex ("p_rebreather");
-		ent->client->ps.stats[STAT_TIMER] = (ent->client->breather_framenum - level.framenum)/10;
+		ent->client->ps.stats[STAT_TIMER] = (int16)((ent->client->breather_framenum - level.framenum)/10);
 	}
 	else
 	{
