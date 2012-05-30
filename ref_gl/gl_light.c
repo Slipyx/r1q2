@@ -739,9 +739,9 @@ store:
 
 			if (!usingmodifiedlightmaps)
 			{
-				dest[0] = colors[0];
-				dest[1] = colors[1];
-				dest[2] = colors[2];
+				dest[0] = (byte)colors[0];
+				dest[1] = (byte)colors[1];
+				dest[2] = (byte)colors[2];
 			}
 			else
 			{
@@ -753,7 +753,7 @@ store:
 					max = (colors[0] + colors[1] + colors[2]) / 3;
 				if (FLOAT_EQ_ZERO (gl_coloredlightmaps->value))
 				{
-					dest[0] = dest[1] = dest[2] = max;
+					dest[0] = dest[1] = dest[2] = (byte)max;
 				}
 				else
 				{
@@ -763,7 +763,7 @@ store:
 				}
 			}
 
-			dest[3] = colors[3];
+			dest[3] = (byte)colors[3];
 
 			bl += BLOCKLIGHT_SIZE;
 			dest += 4;

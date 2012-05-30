@@ -57,7 +57,7 @@ static qboolean VerifyDriver( void )
 {
 	char buffer[1024];
 
-	Q_strncpy( buffer, qglGetString( GL_RENDERER ), sizeof(buffer)-1);
+	Q_strncpy( buffer, (const char *)qglGetString( GL_RENDERER ), sizeof(buffer)-1);
 	strlwr( buffer );
 	if ( strcmp( buffer, "gdi generic" ) == 0 )
 	{
@@ -233,7 +233,7 @@ int VID_CreateWindow( int width, int height, qboolean fullscreen )
 int GLimp_SetMode( unsigned int *pwidth, unsigned int *pheight, int mode, qboolean fullscreen )
 {
 	int	error;
-	int width, height;
+	unsigned int width = 0, height = 0;
 	const char *win_fs[] = { "W", "FS" };
 
 	ri.Con_Printf( PRINT_ALL, "Initializing OpenGL display\n");
@@ -1248,7 +1248,7 @@ qboolean GLimp_InitGL (void)
 
 		{
 			const char *s;
-			s = qglGetString( GL_RENDERER );
+			s = (const char *)qglGetString( GL_RENDERER );
 
 			if (strcmp (s, "GDI Generic") == 0)
 			{

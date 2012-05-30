@@ -622,7 +622,7 @@ void LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int 
 					ri.Con_Printf (PRINT_ALL, "Malformed PCX file (bad runlength encoding): %s\n", filename);
 					goto abortload;
 				}
-				pix[x++] = dataByte;
+				pix[x++] = (byte)dataByte;
 			}
 		}
 	}
@@ -2078,7 +2078,7 @@ typedef struct
 	if (pos[off] == fillcolor) \
 	{ \
 		pos[off] = 255; \
-		fifo[inpt].x = x + (dx), fifo[inpt].y = y + (dy); \
+		fifo[inpt].x = (short)(x + (dx)), fifo[inpt].y = (short)(y + (dy)); \
 		inpt = (inpt + 1) & FLOODFILL_FIFO_MASK; \
 	} \
 	else if (pos[off] != 255) fdc = pos[off]; \
@@ -2126,7 +2126,7 @@ void R_FloodFillSkin( byte *skin, int skinwidth, int skinheight )
 		if (x < skinwidth - 1)	FLOODFILL_STEP( 1, 1, 0 );
 		if (y > 0)				FLOODFILL_STEP( -skinwidth, 0, -1 );
 		if (y < skinheight - 1)	FLOODFILL_STEP( skinwidth, 0, 1 );
-		skin[x + skinwidth * y] = fdc;
+		skin[x + skinwidth * y] = (byte)fdc;
 	}
 }
 
@@ -2457,7 +2457,7 @@ static void GL_MipMapLinear (unsigned *in, int inWidth, int inHeight)
 					2 * ((byte *)&in[ ((i*2+2)&inHeightMask)*inWidth + ((j*2)&inWidthMask) ])[k] +
 					2 * ((byte *)&in[ ((i*2+2)&inHeightMask)*inWidth + ((j*2+1)&inWidthMask) ])[k] +
 					1 * ((byte *)&in[ ((i*2+2)&inHeightMask)*inWidth + ((j*2+2)&inWidthMask) ])[k];
-				outpix[k] = total / 36;
+				outpix[k] = (byte)(total / 36);
 			}
 		}
 	}
@@ -3027,7 +3027,7 @@ image_t	*GL_FindImage (const char *name, const char *basename, imagetype_t type)
 	byte	*pic;
 	byte	*palette;
 	size_t	len;
-	int		width, height, bpp;
+	int		width = 0, height = 0, bpp;
 	unsigned long hash;
 
 	hash = hashify(basename) % IMAGES_HASH_SIZE;
@@ -3340,7 +3340,7 @@ void GL_FreeUnusedImages (void)
 		// free it
 
 		count++;
-		qglDeleteTextures (1, &image->texnum);
+		qglDeleteTextures (1, (const GLuint *)&image->texnum);
 		memset (image, 0, sizeof(*image));
 	}
 
@@ -3445,7 +3445,7 @@ void	GL_InitImages (void)
 	{
 		if ( g == 1 )
 		{
-			gammatable[i] = i;
+			gammatable[i] = (byte)i;
 		}
 		else
 		{
@@ -3466,7 +3466,7 @@ void	GL_InitImages (void)
 		j = (int)((float)i * intensity->value);
 		if (j > 255)
 			j = 255;
-		intensitytable[i] = j;
+		intensitytable[i] = (byte)j;
 	}
 
 	for (i=0 ; i<256 ; i++)
@@ -3494,7 +3494,7 @@ void	GL_ShutdownImages (void)
 		if (!image->registration_sequence)
 			continue;		// free image_t slot
 		// free it
-		qglDeleteTextures (1, &image->texnum);
+		qglDeleteTextures (1, (const GLuint *)&image->texnum);
 		memset (image, 0, sizeof(*image));
 	}
 }

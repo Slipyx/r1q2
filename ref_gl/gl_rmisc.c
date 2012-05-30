@@ -213,7 +213,7 @@ unsigned int __stdcall png_write_thread (byte *buffer)
 	ExitThread (0);
 #endif
 
-	return 0;
+	//return 0; // [JoshK] Warning C4702: Unreachable code
 }
 #endif
 
