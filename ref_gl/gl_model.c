@@ -782,8 +782,8 @@ void CalcSurfaceExtents (msurface_t *s)
 		bmins[i] = (int)floor(mins[i]/16);
 		bmaxs[i] = (int)ceil(maxs[i]/16);
 
-		s->texturemins[i] = bmins[i] * 16;
-		s->extents[i] = (bmaxs[i] - bmins[i]) * 16;
+		s->texturemins[i] = (short)(bmins[i] * 16);
+		s->extents[i] = (short)((bmaxs[i] - bmins[i]) * 16);
 
 //		if ( !(tex->flags & TEX_SPECIAL) && s->extents[i] > 512 /* 256 */ )
 //			ri.Sys_Error (ERR_DROP, "Bad surface extents");
@@ -1137,7 +1137,7 @@ void Mod_LoadPlanes (lump_t *l)
 
 		out->dist = LittleFloat (in->dist);
 		out->type = (byte)LittleLong (in->type);
-		out->signbits = bits;
+		out->signbits = (byte)bits;
 	}
 }
 

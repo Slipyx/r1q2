@@ -1298,12 +1298,12 @@ qboolean QGL_Init( const char *dllname )
 	qglFogiv                     = 	GPA( "glFogiv" );
 	qglFrontFace                 = 	GPA( "glFrontFace" );
 	qglFrustum                   = 	GPA( "glFrustum" );
-	qglGenLists                  = 	GPA( "glGenLists" );
+	qglGenLists                  = 	(GLuint (__stdcall *)(GLsizei))GPA( "glGenLists" );
 	qglGenTextures               = 	GPA( "glGenTextures" );
 	qglGetBooleanv               = 	GPA( "glGetBooleanv" );
 	qglGetClipPlane              = 	GPA( "glGetClipPlane" );
 	qglGetDoublev                = 	GPA( "glGetDoublev" );
-	qglGetError                  = 	GPA( "glGetError" );
+	qglGetError                  = 	(GLenum (__stdcall *)(void))GPA( "glGetError" );
 	qglGetFloatv                 = 	GPA( "glGetFloatv" );
 	qglGetIntegerv               = 	GPA( "glGetIntegerv" );
 	qglGetLightfv                = 	GPA( "glGetLightfv" );
